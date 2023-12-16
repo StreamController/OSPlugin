@@ -14,6 +14,11 @@ from loguru import logger as log
 from PIL import Image, ImageEnhance
 import math
 import threading
+import time
+from evdev import ecodes as e
+from evdev import UInput
+
+from plugins.dev_core447_OSPlugin.Hotkey import Hotkey
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -144,6 +149,14 @@ class OSPlugin(PluginBase):
         print(self.ACTIONS)
         self.add_action(RunCommand)
         self.add_action(OpenInBrowser)
+        self.add_action(Hotkey)
         self.add_action(Delay)
         print(self.ACTIONS)
         print()
+
+        self.init_uinput()
+
+        self.add_css_stylesheet(os.path.join(self.PATH, "style.css"))
+
+    def init_uinput(self):
+        self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
