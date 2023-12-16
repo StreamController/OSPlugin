@@ -106,6 +106,36 @@ class OpenInBrowser(ActionBase):
         new = 1 if self.get_settings().get("new_window", False) else 0
         webbrowser.open(url, new=new)
 
+
+class Delay(ActionBase):
+    ACTION_NAME = "Delay"
+    CONTROLS_KEY_IMAGE = False
+    def __init__(self, deck_controller, page, coords):
+        super().__init__(deck_controller=deck_controller, page=page, coords=coords)
+
+    def get_config_rows(self) -> list:
+        self.delay_row = Adw.SpinRow().new_with_range(min=0, max=10, step=0.1)
+        self.delay_row.set_title("Delay (s):")
+        self.delay_row.set_subtitle("Delay the coming actions on this key")
+
+        # Load from config
+        settings = self.get_settings()
+        self.delay_row.set_value(settings.get("delay", 0))
+
+        self.delay_row.connect("changed", self.on_delay_change)
+
+        return [self.delay_row]
+    
+    def on_delay_change(self, *args):
+        settings = self.get_settings()
+        settings["delay"] = round(self.delay_row.get_value(), 1)
+        self.set_settings(settings)
+
+    def on_key_down(self):
+        delay = self.get_settings().get("delay", 0)
+        time.sleep(delay)
+
+
 class OSPlugin(PluginBase):
     def __init__(self):
         self.PLUGIN_NAME = "OS"
@@ -114,5 +144,6 @@ class OSPlugin(PluginBase):
         print(self.ACTIONS)
         self.add_action(RunCommand)
         self.add_action(OpenInBrowser)
+        self.add_action(Delay)
         print(self.ACTIONS)
         print()
