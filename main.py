@@ -19,6 +19,7 @@ from evdev import ecodes as e
 from evdev import UInput
 
 from plugins.dev_core447_OSPlugin.Hotkey import Hotkey
+from plugins.dev_core447_OSPlugin.Launch import Launch
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -151,6 +152,7 @@ class OSPlugin(PluginBase):
         self.add_action(OpenInBrowser)
         self.add_action(Hotkey)
         self.add_action(Delay)
+        self.add_action(Launch)
         print(self.ACTIONS)
         print()
 
