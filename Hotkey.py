@@ -60,9 +60,13 @@ class HotkeyRow(Adw.PreferencesRow):
 
 class HotkeyRecorder(Gtk.ApplicationWindow):
     def __init__(self, hotkey_row:HotkeyRow, *args, **kwargs):
+        self.GTK_CODE_DIFFERENCE = 8
         super().__init__(*args, **kwargs)
-        self.connect("close-request", self.on_destroy)
         self.hotkey_row = hotkey_row
+
+        self.all_keys = {}
+        self.all_keys.update(evdev.ecodes.KEY)
+        self.all_keys.update(evdev.ecodes.BTN)
 
         self.set_default_size(600, 300)
         self.set_title("Hotkey Recorder")
@@ -97,27 +101,36 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.header_bar.pack_start(self.clear_button)
         self.clear_button.connect("clicked", self.on_clear)
 
-        self.rec_thread = RecorderThread(self)
-        self.rec_thread.start()
-
-
-        # Hover controller
-        self.hover_controlleer = Gtk.EventControllerMotion()
-        self.hover_controlleer.connect("enter", self.on_hover_enter)
-        self.hover_controlleer.connect("leave", self.on_hover_leave)
-        self.scrolled_window.add_controller(self.hover_controlleer)
-
         self.load_defaults()
 
-    def on_hover_enter(self, *args):
-        self.rec_thread.recording = True
+        # Key Controller
+        self.key_controller = Gtk.EventControllerKey()
+        self.key_controller.connect("key-pressed", self.on_key_down)
+        self.key_controller.connect("key-released", self.on_key_up)
+        self.add_controller(self.key_controller)
 
-    def on_hover_leave(self, *args):
-        self.rec_thread.recording = False
+    def on_key_down(self, controller, keyval, keycode, state):
+        self.add_key(keycode, 1)
+
+        # Notify app that key press was handled
+        return True
+
+    def on_key_up(self, controller, keyval, keycode, state):
+        self.add_key(keycode, 0)
+        
+        # Notify app that key press was handled
+        return True
+
+    def add_key(self, key_code, state):
+        key_code -= self.GTK_CODE_DIFFERENCE
+        key_name = self.all_keys[key_code]
+        self.flow_box.append(PressIndicator(key_name, state == 1, state == 0))
+        self.hotkey_row.hotkey.settings["keys"].append([key_code, state])
+        self.hotkey_row.hotkey.set_settings(self.hotkey_row.hotkey.settings)
 
     def load_defaults(self):
         for key in self.hotkey_row.hotkey.settings.get("keys", []):
-            key_name = self.rec_thread.all_keys[key[0]]
+            key_name = self.all_keys[key[0]]
             if isinstance(key_name, list):
                 key_name = key_name[0]
             self.flow_box.append(PressIndicator(key_name, key[1] == 1, key[1] == 0))
@@ -129,50 +142,6 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         # Clear ui
         while self.flow_box.get_first_child() is not None:
             self.flow_box.remove(self.flow_box.get_first_child())
-
-    def on_destroy(self, *args):
-        self.rec_thread.killed()
-        self.rec_thread.join()
-
-
-class RecorderThread(threading.Thread):
-    def __init__(self, recorder:HotkeyRecorder):
-        super().__init__()
-
-        self.recorder = recorder
-        self.all_keys = {}
-        self.all_keys.update(evdev.ecodes.KEY)
-        self.all_keys.update(evdev.ecodes.BTN)
-
-
-        self.selector = DefaultSelector()
-        self.devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-        for device in self.devices:
-            self.selector.register(device, EVENT_READ)
-
-        self.recording = False
-        self.killed = False
-
-    def run(self):
-        while not self.killed:
-            while self.recording:
-                for key, mask in self.selector.select():
-                    device = key.fileobj
-                    for event in device.read():
-                        if event.type != e.EV_KEY:
-                            continue
-                        # print(categorize(event))
-                        print(event.code)
-                        key_name = self.all_keys[event.code]
-                        if isinstance(key_name, list):
-                            key_name = key_name[0]
-
-                        self.recorder.flow_box.append(PressIndicator(key_name, event.value == 1, event.value == 0))
-                        self.recorder.hotkey_row.hotkey.settings["keys"].append([event.code, event.value])
-                        self.recorder.hotkey_row.hotkey.set_settings(self.recorder.hotkey_row.hotkey.settings)
-
-    def kill(self):
-        self.killed = True
 
 
 class PressIndicator(Gtk.FlowBoxChild):
