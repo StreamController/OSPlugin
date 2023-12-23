@@ -11,7 +11,7 @@ from gi.repository import Gtk, Adw
 import glob
 import configparser
 import os
-import multiprocessing
+import subprocess
 
 
 class Launch(ActionBase):
@@ -96,5 +96,4 @@ class Launch(ActionBase):
         settings = self.get_settings()
         app_path = settings.get("app_path")
         if app_path is not None:
-            #FIXME: Launched app closes if StreamController closes
-            multiprocessing.Process(target=os.system, args=(app_path,)).start()
+            subprocess.Popen([app_path], start_new_session=True)
