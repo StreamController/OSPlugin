@@ -14,6 +14,7 @@ from loguru import logger as log
 from PIL import Image, ImageEnhance
 import math
 import threading
+import subprocess
 import time
 from evdev import ecodes as e
 from evdev import UInput
@@ -60,9 +61,7 @@ class RunCommand(ActionBase):
     def run_command(self, command):
         if command is None:
             return
-        if not command.endswith("&"):
-            command += " &"
-        os.system(command)
+        subprocess.Popen(command, shell=True, start_new_session=True)
 
 class OpenInBrowser(ActionBase):
     ACTION_NAME = "Open In Browser"
