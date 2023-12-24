@@ -13,6 +13,4 @@ class CPU_Graph(GraphBase):
 
     def on_tick(self):
         self.percentages.append(psutil.cpu_percent())
-        self.set_percentages_lenght(15)
-
-        self.set_key(image=self.get_graph())
+        self.show_graph()
