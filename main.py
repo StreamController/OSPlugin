@@ -22,6 +22,7 @@ from evdev import UInput
 from plugins.dev_core447_OSPlugin.Hotkey import Hotkey
 from plugins.dev_core447_OSPlugin.Launch import Launch
 from plugins.dev_core447_OSPlugin.CPU_Graph import CPU_Graph
+from plugins.dev_core447_OSPlugin.RAM_Graph import RAM_Graph
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -154,6 +155,7 @@ class OSPlugin(PluginBase):
         self.add_action(Delay)
         self.add_action(Launch)
         self.add_action(CPU_Graph)
+        self.add_action(RAM_Graph)
         print(self.ACTIONS)
         print()
 
