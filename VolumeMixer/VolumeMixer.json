@@ -1,0 +1,709 @@
+{
+    "screensaver": {
+        "overwrite": false,
+        "enable": false,
+        "path": null,
+        "loop": false,
+        "fps": 30,
+        "time-delay": 5,
+        "brightness": 75.0
+    },
+    "background": {
+        "overwrite": false,
+        "show": false,
+        "path": null
+    },
+    "brightness": {},
+    "keys": {
+        "0x0": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Exit Volume Mixer",
+                    "settings": {}
+                }
+            ]
+        },
+        "1x1": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Mute Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "0x2": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Move Left",
+                    "settings": {}
+                }
+            ]
+        },
+        "2x1": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Mute Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "3x1": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Mute Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "4x1": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Mute Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "1x0": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Up Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "2x0": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Up Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "3x0": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Up Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "4x0": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Up Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "1x2": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Down Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "2x2": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Down Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "3x2": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Down Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "4x2": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Down Key",
+                    "settings": {}
+                }
+            ]
+        },
+        "0x1": {
+            "labels": {
+                "top": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "center": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                },
+                "bottom": {
+                    "text": "",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ],
+                    "font-family": "",
+                    "font-size": 15,
+                    "stroke-width": 0
+                }
+            },
+            "actions": [
+                {
+                    "name": "dev_core447_OSPlugin::Volume Mixer Move Right",
+                    "settings": {}
+                }
+            ]
+        }
+    }
+}

@@ -5,7 +5,7 @@ from src.backend.PluginManager.PluginBase import PluginBase
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw
+from gi.repository import Gtk, Adw, Gdk
 
 import evdev
 
@@ -108,6 +108,17 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.key_controller.connect("key-pressed", self.on_key_down)
         self.key_controller.connect("key-released", self.on_key_up)
         self.add_controller(self.key_controller)
+
+        display = self.get_display()
+        self.seat: Gdk.Seat = display.get_default_seat()
+        # self.seat.grab(
+            # self, Gdk.SeatCapabilities.KEYBOARD, False, None, None, None
+        # )
+
+        self.connect("destroy", self.on_destroy)
+
+    def on_destroy(self, *args):
+        self.seat.ungrab()
 
     def on_key_down(self, controller, keyval, keycode, state):
         self.add_key(keycode, 1)

@@ -28,6 +28,7 @@ class GraphBase(ActionBase):
         return self.percentages
     
     def get_graph(self) -> Image:
+        return Image.new("RGBA", (72, 72), (255, 0, 0, 255))
         ## Get vars
         settings = self.get_settings()
         line_color = self.conv_color_to_plt(settings.get("line-color", [255, 255, 255, 255]))

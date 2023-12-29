@@ -24,6 +24,16 @@ from plugins.dev_core447_OSPlugin.Launch import Launch
 from plugins.dev_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.dev_core447_OSPlugin.RAM_Graph import RAM_Graph
 
+## VolumeMixer
+import pulsectl
+from plugins.dev_core447_OSPlugin.VolumeMixer.OpenVolumeMixer import OpenVolumeMixer
+from plugins.dev_core447_OSPlugin.VolumeMixer.ExitVolumeMixer import ExitVolumeMixer
+from plugins.dev_core447_OSPlugin.VolumeMixer.MuteKey import MuteKey
+from plugins.dev_core447_OSPlugin.VolumeMixer.VolumeUpKey import UpKey
+from plugins.dev_core447_OSPlugin.VolumeMixer.VolumeDownKey import DownKey
+from plugins.dev_core447_OSPlugin.VolumeMixer.MoveRight import MoveRight
+from plugins.dev_core447_OSPlugin.VolumeMixer.MoveLeft import MoveLeft
+
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
 
@@ -148,6 +158,8 @@ class OSPlugin(PluginBase):
         self.PLUGIN_NAME = "OS"
         self.GITHUB_REPO = "https://github.com/your-github-repo"
         super().__init__()
+        self.init_vars()
+
         print(self.ACTIONS)
         self.add_action(RunCommand)
         self.add_action(OpenInBrowser)
@@ -156,12 +168,26 @@ class OSPlugin(PluginBase):
         self.add_action(Launch)
         self.add_action(CPU_Graph)
         self.add_action(RAM_Graph)
-        print(self.ACTIONS)
-        print()
 
-        self.init_uinput()
+        ## VolumeMixer
+        self.add_action(OpenVolumeMixer)
+        self.add_action(ExitVolumeMixer)
+        self.add_action(MuteKey)
+        self.add_action(UpKey)
+        self.add_action(DownKey)
+        self.add_action(MoveRight)
+        self.add_action(MoveLeft)
 
         self.add_css_stylesheet(os.path.join(self.PATH, "style.css"))
 
-    def init_uinput(self):
+        self.register_page(os.path.join(self.PATH, "VolumeMixer", "VolumeMixer.json"))
+
+    def init_vars(self):
         self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
+        
+        ## Volume Mixer #TODO: Add multi deck support
+        self.original_page_path = None
+        self.start_index = 0
+        self.pulse = pulsectl.Pulse("stream-controller")
+        self.volume_increment = 0.1
+        self.volume_actions: list[ActionBase] = []
