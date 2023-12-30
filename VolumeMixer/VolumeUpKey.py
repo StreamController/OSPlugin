@@ -3,30 +3,41 @@ import globals as gl
 from loguru import logger as log
 
 import os
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 class UpKey(ActionBase):
     ACTION_NAME = "Volume Mixer Up Key"
-    CONTROLS_KEY_IMAGE = False
+    CONTROLS_KEY_IMAGE = True
 
     def __init__(self, deck_controller, page, coords):
         super().__init__(deck_controller, page, coords)
         self.PLUGIN_BASE.volume_actions.append(self)
 
-        self.showing_image = False
+        self.current_state = -1
+
         self.icon_path = os.path.join(self.PLUGIN_BASE.PATH, "assets", "volume_up.png")
 
     def on_tick(self):
         index = self.get_index()
 
         inputs = self.PLUGIN_BASE.pulse.sink_input_list()
-        if index < len(inputs):
-            if not self.showing_image:
-                self.set_key(media_path=self.icon_path)
-                self.showing_image = True
-
+        if index >= len(inputs):
+            self.show_state(0)
         else:
-            self.clear()
+            if self.can_go_higher():
+                self.show_state(1)
+            else:
+                self.show_state(2)
+
+    def can_go_higher(self) -> bool:
+        index = self.get_index()
+        inputs = self.PLUGIN_BASE.pulse.sink_input_list()
+        if index >= len(inputs):
+            return False
+        current_vol = inputs[index].volume.value_flat
+        if current_vol < 1:
+            return True
+        return False
 
     def clear(self):
         if not self.showing_image:
@@ -44,10 +55,40 @@ class UpKey(ActionBase):
         volume = inputs[index].volume.value_flat
         volume += self.PLUGIN_BASE.volume_increment
 
-        self.PLUGIN_BASE.pulse.volume_set_all_chans(obj=inputs[index], vol=max(0, volume))
+        self.PLUGIN_BASE.pulse.volume_set_all_chans(obj=inputs[index], vol=min(1, volume))
 
     def get_index(self) -> int:
         start_index = self.PLUGIN_BASE.start_index
         own_index = self.coords[0]
         index = start_index + own_index - 1 # -1 because we want to ignore the first column containing the navigation keys
         return index
+    
+    def show_state(self, state: int) -> None:
+        """
+        0: No player
+        1: Can go up
+        2: Greyed out
+        """
+        # Don't do anything if the state hasn't changed
+        if state == self.current_state:
+            return
+        self.current_state = state
+        
+        brightness = 1
+        if state == 0:
+            brightness = 0.25
+            self.set_bottom_label("No player", font_size=12)
+        elif state == 1:
+            self.set_bottom_label("Up", font_size=12)
+            self.set_key(media_path=self.icon_path, margins=[10, 5, 10, 15])
+            return
+        elif state == 2:
+            brightness = 0.65
+            self.set_bottom_label("Max", font_size=12)
+
+        # Set image with modified brightness
+        image = Image.open(self.icon_path)
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(brightness)
+
+        self.set_key(image=image, margins=[10, 5, 10, 15])

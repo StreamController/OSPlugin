@@ -15,9 +15,14 @@ class OpenVolumeMixer(ActionBase):
     ACTION_NAME = "Open Volume Mixer"
     CONTROLS_KEY_IMAGE = False
 
-    def on_ready(self):
+    def __init__(self, deck_controller, page, coords):
+        super().__init__(deck_controller, page, coords)
         icon_path = os.path.join(self.PLUGIN_BASE.PATH, "assets", "equalizer.png")
         self.set_default_image(Image.open(icon_path))
+
+    def on_ready(self):
+        pass
+        
 
     def on_key_down(self):
         # Reset position
