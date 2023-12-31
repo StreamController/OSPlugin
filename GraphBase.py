@@ -1,6 +1,9 @@
 from src.backend.PluginManager.ActionBase import ActionBase
 
 import matplotlib.pyplot as plt
+import matplotlib
+# Use different backend to prevent errors with running plt in different threads
+matplotlib.use('agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from PIL import Image
 import io
