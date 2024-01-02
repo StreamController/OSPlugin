@@ -195,9 +195,9 @@ class GraphBase(ActionBase):
 
     def on_key_down(self):
         settings = self.get_settings()
-        if not settings["toggle-dynamic-scaling-on-press"]:
+        if not settings.get("toggle-dynamic-scaling-on-press", False):
             return
-        settings["dynamic-scaling"] = not settings["dynamic-scaling"]
+        settings["dynamic-scaling"] = not settings.get("dynamic-scaling", False)
         self.set_settings(settings)
 
         if hasattr(self, "dynamic_scaling_row"):
