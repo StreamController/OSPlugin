@@ -1,0 +1,7 @@
+{
+    "run.entry.title": "Command:",
+    "open-browser.url.title": "URL:",
+    "open-browser.new-window": "Open in new window",
+    "delay.entry.title": "Delay (s):",
+    "delay.entry.subtitle": "The delay before the next action is executed"
+}

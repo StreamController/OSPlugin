@@ -50,7 +50,7 @@ class RunCommand(ActionBase):
         self.run_command(command)
 
     def get_config_rows(self):
-        entry_row = Adw.EntryRow(title="Command:")
+        entry_row = Adw.EntryRow(title=self.PLUGIN_BASE.lm.get("run.entry.title"))
 
         # Load from config
         settings = self.get_settings()
@@ -88,8 +88,8 @@ class OpenInBrowser(ActionBase):
         self.open_url(url)
 
     def get_config_rows(self):
-        entry_row = Adw.EntryRow(title="URL:")
-        new_window_toggle = Adw.SwitchRow(title="Open in new window")
+        entry_row = Adw.EntryRow(title=self.PLUGIN_BASE.lm.get("open-browser.url.title"))
+        new_window_toggle = Adw.SwitchRow(title=self.PLUGIN_BASE.lm.get("open-browser.new-window"))
 
         # Load from config
         settings = self.get_settings()
@@ -132,8 +132,8 @@ class Delay(ActionBase):
 
     def get_config_rows(self) -> list:
         self.delay_row = Adw.SpinRow().new_with_range(min=0, max=10, step=0.1)
-        self.delay_row.set_title("Delay (s):")
-        self.delay_row.set_subtitle("Delay the coming actions on this key")
+        self.delay_row.set_title(self.PLUGIN_BASE.lm.get("delay.entry.title"))
+        self.delay_row.set_subtitle(self.PLUGIN_BASE.lm.get("delay.entry.subtitle"))
 
         # Load from config
         settings = self.get_settings()
@@ -181,6 +181,9 @@ class OSPlugin(PluginBase):
         self.add_css_stylesheet(os.path.join(self.PATH, "style.css"))
 
         self.register_page(os.path.join(self.PATH, "VolumeMixer", "VolumeMixer.json"))
+
+        self.lm = self.locale_manager
+        self.lm.set_to_os_default()
 
     def init_vars(self):
         self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
