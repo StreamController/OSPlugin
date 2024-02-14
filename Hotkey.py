@@ -34,8 +34,8 @@ class Hotkey(ActionBase):
     
     def on_key_down(self):
         for key in self.settings.get("keys", []):
-            self.PLUGIN_BASE.ui.write(e.EV_KEY, key[0], key[1])
-            self.PLUGIN_BASE.ui.syn()
+            self.plugin_base.ui.write(e.EV_KEY, key[0], key[1])
+            self.plugin_base.ui.syn()
 
 
 

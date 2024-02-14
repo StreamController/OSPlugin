@@ -1,5 +1,6 @@
 from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.PluginManager.PluginBase import PluginBase
+from src.backend.PluginManager.ActionHolder import ActionHolder
 
 # Import gtk modules
 import gi
@@ -19,8 +20,14 @@ import time
 from evdev import ecodes as e
 from evdev import UInput
 
+from src.backend.DeckManagement.DeckController import DeckController
+from src.backend.PageManagement.Page import Page
+
 from plugins.dev_core447_OSPlugin.Hotkey import Hotkey
 from plugins.dev_core447_OSPlugin.Launch import Launch
+from plugins.dev_core447_OSPlugin.actions.RunCommand.RunCommand import RunCommand
+from plugins.dev_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
+from plugins.dev_core447_OSPlugin.actions.Delay.Delay import Delay
 from plugins.dev_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.dev_core447_OSPlugin.RAM_Graph import RAM_Graph
 
@@ -37,120 +44,11 @@ from plugins.dev_core447_OSPlugin.VolumeMixer.MoveLeft import MoveLeft
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
 
-class RunCommand(ActionBase):
-    ACTION_NAME = "Run Command"
-    CONTROLS_KEY_IMAGE = False
-    def __init__(self, deck_controller, page, coords):
-        super().__init__(deck_controller=deck_controller, page=page, coords=coords)
-
-        self.set_default_image(Image.open(os.path.join(self.PLUGIN_BASE.PATH, "assets", "terminal.png")))
-
-    def on_key_down(self):
-        command = self.get_settings().get("command", None)
-        self.run_command(command)
-
-    def get_config_rows(self):
-        entry_row = Adw.EntryRow(title=self.PLUGIN_BASE.lm.get("run.entry.title"))
-
-        # Load from config
-        settings = self.get_settings()
-        command = settings.setdefault("command", None)
-        if command is None:
-            command = ""
-        entry_row.set_text(command)
-        self.set_settings(settings)
-
-        # Connect entry
-        entry_row.connect("notify::text", self.on_change_command)
-
-        return [entry_row]
-
-    def on_change_command(self, entry, *args):
-        settings = self.get_settings()
-        settings["command"] = entry.get_text()
-        self.set_settings(settings)
-
-    def run_command(self, command):
-        if command is None:
-            return
-        subprocess.Popen(command, shell=True, start_new_session=True)
-
-class OpenInBrowser(ActionBase):
-    ACTION_NAME = "Open In Browser"
-    CONTROLS_KEY_IMAGE = False
-
-    def __init__(self, deck_controller, page, coords):
-        super().__init__(deck_controller=deck_controller, page=page, coords=coords)
-        self.set_default_image(Image.open(os.path.join(self.PLUGIN_BASE.PATH, "assets", "web.png")))
-
-    def on_key_down(self):
-        url = self.get_settings().get("url", None)
-        self.open_url(url)
-
-    def get_config_rows(self):
-        entry_row = Adw.EntryRow(title=self.PLUGIN_BASE.lm.get("open-browser.url.title"))
-        new_window_toggle = Adw.SwitchRow(title=self.PLUGIN_BASE.lm.get("open-browser.new-window"))
-
-        # Load from config
-        settings = self.get_settings()
-        url = settings.setdefault("url", None)
-        if url is None:
-            url = ""
-        entry_row.set_text(url)
-        new_window_toggle.set_active(settings.setdefault("new_window", False))
-        self.set_settings(settings)
-
-        # Connect entry
-        entry_row.connect("notify::text", self.on_change_url)
-        # Connect switch
-        new_window_toggle.connect("notify::active", self.on_change_new_window)
-
-        return [entry_row, new_window_toggle]
-
-    def on_change_url(self, entry, *args):
-        settings = self.get_settings()
-        settings["url"] = entry.get_text()
-        self.set_settings(settings)
-
-    def on_change_new_window(self, switch, *args):
-        settings = self.get_settings()
-        settings["new_window"] = switch.get_active()
-        self.set_settings(settings)
-
-    def open_url(self, url):
-        if url in [None, ""]:
-            return
-        new = 1 if self.get_settings().get("new_window", False) else 0
-        webbrowser.open(url, new=new)
 
 
-class Delay(ActionBase):
-    ACTION_NAME = "Delay"
-    CONTROLS_KEY_IMAGE = False
-    def __init__(self, deck_controller, page, coords):
-        super().__init__(deck_controller=deck_controller, page=page, coords=coords)
 
-    def get_config_rows(self) -> list:
-        self.delay_row = Adw.SpinRow().new_with_range(min=0, max=10, step=0.1)
-        self.delay_row.set_title(self.PLUGIN_BASE.lm.get("delay.entry.title"))
-        self.delay_row.set_subtitle(self.PLUGIN_BASE.lm.get("delay.entry.subtitle"))
 
-        # Load from config
-        settings = self.get_settings()
-        self.delay_row.set_value(settings.get("delay", 0))
 
-        self.delay_row.connect("changed", self.on_delay_change)
-
-        return [self.delay_row]
-    
-    def on_delay_change(self, *args):
-        settings = self.get_settings()
-        settings["delay"] = round(self.delay_row.get_value(), 1)
-        self.set_settings(settings)
-
-    def on_key_down(self):
-        delay = self.get_settings().get("delay", 0)
-        time.sleep(delay)
 
 
 class OSPlugin(PluginBase):
@@ -160,32 +58,138 @@ class OSPlugin(PluginBase):
         super().__init__()
         self.init_vars()
 
-        print(self.ACTIONS)
-        self.add_action(RunCommand)
-        self.add_action(OpenInBrowser)
-        self.add_action(Hotkey)
-        self.add_action(Delay)
-        self.add_action(Launch)
-        self.add_action(CPU_Graph)
-        self.add_action(RAM_Graph)
+        self.run_command_holder = ActionHolder(
+            plugin_base=self,
+            action_base=RunCommand,
+            action_id="dev_core447_OSPlugin::RunCommand",
+            action_name=self.lm.get("actions.run-command.name")
+        )
+        self.add_action_holder(self.run_command_holder)
+
+        self.open_in_browser_holder = ActionHolder(
+            plugin_base=self,
+            action_base=OpenInBrowser,
+            action_id="dev_core447_OSPlugin::OpenInBrowser",
+            action_name=self.lm.get("actions.open-in-browser.name")
+        )
+        self.add_action_holder(self.open_in_browser_holder)
+
+        self.hotkey_holder = ActionHolder(
+            plugin_base=self,
+            action_base=Hotkey,
+            action_id="dev_core447_OSPlugin::Hotkey",
+            action_name=self.lm.get("actions.hotkey.name")
+        )
+        self.add_action_holder(self.hotkey_holder)
+
+        self.delay_holder = ActionHolder(
+            plugin_base=self,
+            action_base=Delay,
+            action_id="dev_core447_OSPlugin::Delay",
+            action_name=self.lm.get("actions.delay.name")
+        )
+        self.add_action_holder(self.delay_holder)
+
+        self.launch_holder = ActionHolder(
+            plugin_base=self,
+            action_base=Launch,
+            action_id="dev_core447_OSPlugin::Launch",
+            action_name=self.lm.get("actions.launch.name")
+        )
+        self.add_action_holder(self.launch_holder)
+
+        self.cpu_graph_holder = ActionHolder(
+            plugin_base=self,
+            action_base=CPU_Graph,
+            action_id="dev_core447_OSPlugin::CPU_Graph",
+            action_name=self.lm.get("actions.cpu-graph.name")
+        )
+        self.add_action_holder(self.cpu_graph_holder)
+
+        self.ram_graph_holder = ActionHolder(
+            plugin_base=self,
+            action_base=RAM_Graph,
+            action_id="dev_core447_OSPlugin::RAM_Graph",
+            action_name=self.lm.get("actions.ram-graph.name")
+        )
+        self.add_action_holder(self.ram_graph_holder)
 
         ## VolumeMixer
-        self.add_action(OpenVolumeMixer)
-        self.add_action(ExitVolumeMixer)
-        self.add_action(MuteKey)
-        self.add_action(UpKey)
-        self.add_action(DownKey)
-        self.add_action(MoveRight)
-        self.add_action(MoveLeft)
+        self.open_volume_mixer_holder = ActionHolder(
+            plugin_base=self,
+            action_base=OpenVolumeMixer,
+            action_id="dev_core447_OSPlugin::VM_Open",
+            action_name=self.lm.get("actions.open-volume-mixer.name")
+        )
+        self.add_action_holder(self.open_volume_mixer_holder)
+
+        self.exit_volume_mixer_holder = ActionHolder(
+            plugin_base=self,
+            action_base=ExitVolumeMixer,
+            action_id="dev_core447_OSPlugin::VM_Exit",
+            action_name=self.lm.get("actions.exit-volume-mixer.name")
+        )
+        self.add_action_holder(self.exit_volume_mixer_holder)
+
+        self.mute_key_holder = ActionHolder(
+            plugin_base=self,
+            action_base=MuteKey,
+            action_id="dev_core447_OSPlugin::VM_VolumeMute",
+            action_name=self.lm.get("actions.mute-key.name")
+        )
+        self.add_action_holder(self.mute_key_holder)
+
+        self.up_key_holder = ActionHolder(
+            plugin_base=self,
+            action_base=UpKey,
+            action_id="dev_core447_OSPlugin::VM_VolumeUp",
+            action_name=self.lm.get("actions.up-key.name")
+        )
+        self.add_action_holder(self.up_key_holder)
+
+        self.down_key_holder = ActionHolder(
+            plugin_base=self,
+            action_base=DownKey,
+            action_id="dev_core447_OSPlugin::VM_VolumeDown",
+            action_name=self.lm.get("actions.down-key.name")
+        )
+        self.add_action_holder(self.down_key_holder)
+
+        self.move_right_holder = ActionHolder(
+            plugin_base=self,
+            action_base=MoveRight,
+            action_id="dev_core447_OSPlugin::VM_MoveRight",
+            action_name=self.lm.get("actions.move-right.name")
+        )
+        self.add_action_holder(self.move_right_holder)
+
+        self.move_left_holder = ActionHolder(
+            plugin_base=self,
+            action_base=MoveLeft,
+            action_id="dev_core447_OSPlugin::VM_MoveLeft",
+            action_name=self.lm.get("actions.move-left.name")
+        )
+        self.add_action_holder(self.move_left_holder)
+
+        # Register plugin
+        self.register(
+            plugin_name=self.lm.get("plugin.name"),
+            github_repo="https://github.com/Core447/OSPlugin",
+            plugin_version="0.1",
+            app_version="0.1.1-alpha"
+        )
+
 
         self.add_css_stylesheet(os.path.join(self.PATH, "style.css"))
 
         self.register_page(os.path.join(self.PATH, "VolumeMixer", "VolumeMixer.json"))
 
+        
+
+    def init_vars(self):
         self.lm = self.locale_manager
         self.lm.set_to_os_default()
 
-    def init_vars(self):
         self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
         
         ## Volume Mixer #TODO: Add multi deck support

@@ -1,4 +1,7 @@
 from src.backend.PluginManager.ActionBase import ActionBase
+from src.backend.DeckManagement.DeckController import DeckController
+from src.backend.PageManagement.Page import Page
+from src.backend.PluginManager.PluginBase import PluginBase
 
 import matplotlib.pyplot as plt
 import matplotlib
@@ -16,8 +19,10 @@ gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gdk
 
 class GraphBase(ActionBase):
-    def __init__(self, deck_controller, page, coords):
-        super().__init__(deck_controller=deck_controller, page=page, coords=coords)
+    def __init__(self, action_id: str, action_name: str,
+                 deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
+        super().__init__(action_id=action_id, action_name=action_name,
+            deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
 
         self.percentages: list[float] = []
 

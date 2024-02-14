@@ -3,5 +3,20 @@
     "open-browser.url.title": "URL:",
     "open-browser.new-window": "Open in new window",
     "delay.entry.title": "Delay (s):",
-    "delay.entry.subtitle": "The delay before the next action is executed"
+    "delay.entry.subtitle": "The delay before the next action is executed",
+    "actions.run-command.name": "Run Command",
+    "actions.open-in-browser.name": "Open In Browser",
+    "actions.hotkey.name": "Hotkey",
+    "actions.delay.name": "Delay",
+    "actions.launch.name": "Launch App",
+    "actions.cpu-graph.name": "CPU Graph",
+    "actions.ram-graph.name": "RAM Graph",
+    "actions.open-volume-mixer.name": "Open Volume Mixer",
+    "actions.exit-volume-mixer.name": "Exit Volume Mixer",
+    "actions.mute-key.name": "Volume Mixer Mute",
+    "actions.up-key.name": "Volume Mixer Louder",
+    "actions.down-key.name": "Volume Mixer Softer",
+    "actions.move-right.name": "Volume Mixer Move Right",
+    "actions.move-left.name": "Volume Mixer Move Left",
+    "plugin.name": "OS"
 }

@@ -1,24 +1,27 @@
 from src.backend.PluginManager.ActionBase import ActionBase
+from src.backend.PluginManager.ActionBase import ActionBase
+from src.backend.DeckManagement.DeckController import DeckController
+from src.backend.PageManagement.Page import Page
+from src.backend.PluginManager.PluginBase import PluginBase
 
 import os
 from PIL import Image, ImageEnhance
 
 class MoveRight(ActionBase):
-    ACTION_NAME = "Volume Mixer Move Right"
-    CONTROLS_KEY_IMAGE = True
-
-    def __init__(self, deck_controller, page, coords):
-        super().__init__(deck_controller, page, coords)
+    def __init__(self, action_id: str, action_name: str,
+                 deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
+        super().__init__(action_id=action_id, action_name=action_name,
+            deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
 
         self.current_state = -1
 
-        self.icon_path = os.path.join(self.PLUGIN_BASE.PATH, "assets", "navigate_next.png")
+        self.icon_path = os.path.join(self.plugin_base.PATH, "assets", "navigate_next.png")
 
     def on_ready(self):
         self.on_tick()
 
     def on_tick(self):
-        start_index = self.PLUGIN_BASE.start_index
+        start_index = self.plugin_base.start_index
 
         if start_index > 0: # -1 because we want to ignore the first column containing the navigation keys
             # Show that we can go right
@@ -33,9 +36,9 @@ class MoveRight(ActionBase):
         if self.current_state == 0:
             return
         # Change start_index
-        self.PLUGIN_BASE.start_index = max(0, self.PLUGIN_BASE.start_index - 1)
+        self.plugin_base.start_index = max(0, self.plugin_base.start_index - 1)
 
-        for action in self.PLUGIN_BASE.volume_actions:
+        for action in self.plugin_base.volume_actions:
             if action == self:
                 continue
             action.on_tick()
