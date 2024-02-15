@@ -97,7 +97,8 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.header_bar = Gtk.HeaderBar()
         self.set_titlebar(self.header_bar)
 
-        self.confirm_button = Gtk.Button(label="Confirm", css_classes=["confirm-button"], sensitive=False)
+        self.confirm_button = Gtk.Button(label="Confirm", css_classes=["confirm-button"])
+        self.confirm_button.connect("clicked", self.on_confirm)
         self.header_bar.pack_end(self.confirm_button)
 
         self.clear_button = Gtk.Button(label="Clear", css_classes=["remove-button"])
@@ -119,6 +120,10 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         # )
 
         self.connect("destroy", self.on_destroy)
+
+    def on_confirm(self, button):
+        self.close()
+        self.destroy()
 
     def on_destroy(self, *args):
         self.seat.ungrab()
