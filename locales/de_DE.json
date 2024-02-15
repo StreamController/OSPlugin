@@ -18,5 +18,7 @@
     "actions.down-key.name": "Lautstärkemixer Leiser",
     "actions.move-right.name": "Lautstärkemixer nach rechts bewegen",
     "actions.move-left.name": "Lautstärkemixer nach links bewegen",
-    "plugin.name": "Betriebssystem"
+    "plugin.name": "Betriebssystem",
+    "actions.hotkey.recorder.confirm-text": "Bestätigen",
+    "actions.hotkey.recorder.clear-text": "Zurücksetzen"
 }
