@@ -15,12 +15,10 @@ import subprocess
 
 
 class Launch(ActionBase):
-    ACTION_NAME = "Launch"
-    CONTROLS_KEY_IMAGE = False
-
-    def __init__(self, deck_controller, page, coords):
-        super().__init__(deck_controller=deck_controller, page=page, coords=coords)
-        self.apps = self.get_installed_apps()
+    def __init__(self, action_id: str, action_name: str,
+                 deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
+        super().__init__(action_id=action_id, action_name=action_name,
+            deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
 
     def get_installed_apps(self):
         apps = {}
