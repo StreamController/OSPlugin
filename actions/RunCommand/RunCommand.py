@@ -49,4 +49,11 @@ class RunCommand(ActionBase):
     def run_command(self, command):
         if command is None:
             return
+        
+        if self.is_in_flatpak():
+            command = "flatpak-spawn --host " + command
+
         subprocess.Popen(command, shell=True, start_new_session=True)
+
+    def is_in_flatpak(self) -> bool:
+        return os.path.isfile('/.flatpak-info')
