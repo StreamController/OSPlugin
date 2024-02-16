@@ -11,13 +11,6 @@
     "actions.launch.name": "Anwendung starten",
     "actions.cpu-graph.name": "CPU-Graph",
     "actions.ram-graph.name": "RAM-Graph",
-    "actions.open-volume-mixer.name": "Lautstärkemixer öffnen",
-    "actions.exit-volume-mixer.name": "Lautstärkemixer beenden",
-    "actions.mute-key.name": "Lautstärkemixer Stumm",
-    "actions.up-key.name": "Lautstärkemixer Lauter",
-    "actions.down-key.name": "Lautstärkemixer Leiser",
-    "actions.move-right.name": "Lautstärkemixer nach rechts bewegen",
-    "actions.move-left.name": "Lautstärkemixer nach links bewegen",
     "plugin.name": "Betriebssystem",
     "actions.hotkey.recorder.confirm-text": "Bestätigen",
     "actions.hotkey.recorder.clear-text": "Zurücksetzen"

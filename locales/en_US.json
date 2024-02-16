@@ -11,13 +11,6 @@
     "actions.launch.name": "Launch App",
     "actions.cpu-graph.name": "CPU Graph",
     "actions.ram-graph.name": "RAM Graph",
-    "actions.open-volume-mixer.name": "Open Volume Mixer",
-    "actions.exit-volume-mixer.name": "Exit Volume Mixer",
-    "actions.mute-key.name": "Volume Mixer Mute",
-    "actions.up-key.name": "Volume Mixer Louder",
-    "actions.down-key.name": "Volume Mixer Softer",
-    "actions.move-right.name": "Volume Mixer Move Right",
-    "actions.move-left.name": "Volume Mixer Move Left",
     "plugin.name": "OS",
     "actions.hotkey.recorder.confirm-text": "Confirm",
     "actions.hotkey.recorder.clear-text": "Clear"

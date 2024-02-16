@@ -31,24 +31,8 @@ from plugins.dev_core447_OSPlugin.actions.Delay.Delay import Delay
 from plugins.dev_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.dev_core447_OSPlugin.RAM_Graph import RAM_Graph
 
-## VolumeMixer
-import pulsectl
-from plugins.dev_core447_OSPlugin.VolumeMixer.OpenVolumeMixer import OpenVolumeMixer
-from plugins.dev_core447_OSPlugin.VolumeMixer.ExitVolumeMixer import ExitVolumeMixer
-from plugins.dev_core447_OSPlugin.VolumeMixer.MuteKey import MuteKey
-from plugins.dev_core447_OSPlugin.VolumeMixer.VolumeUpKey import UpKey
-from plugins.dev_core447_OSPlugin.VolumeMixer.VolumeDownKey import DownKey
-from plugins.dev_core447_OSPlugin.VolumeMixer.MoveRight import MoveRight
-from plugins.dev_core447_OSPlugin.VolumeMixer.MoveLeft import MoveLeft
-
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
-
-
-
-
-
-
 
 
 class OSPlugin(PluginBase):
@@ -115,63 +99,6 @@ class OSPlugin(PluginBase):
         )
         self.add_action_holder(self.ram_graph_holder)
 
-        ## VolumeMixer
-        self.open_volume_mixer_holder = ActionHolder(
-            plugin_base=self,
-            action_base=OpenVolumeMixer,
-            action_id="dev_core447_OSPlugin::VM_Open",
-            action_name=self.lm.get("actions.open-volume-mixer.name")
-        )
-        self.add_action_holder(self.open_volume_mixer_holder)
-
-        self.exit_volume_mixer_holder = ActionHolder(
-            plugin_base=self,
-            action_base=ExitVolumeMixer,
-            action_id="dev_core447_OSPlugin::VM_Exit",
-            action_name=self.lm.get("actions.exit-volume-mixer.name")
-        )
-        self.add_action_holder(self.exit_volume_mixer_holder)
-
-        self.mute_key_holder = ActionHolder(
-            plugin_base=self,
-            action_base=MuteKey,
-            action_id="dev_core447_OSPlugin::VM_VolumeMute",
-            action_name=self.lm.get("actions.mute-key.name")
-        )
-        self.add_action_holder(self.mute_key_holder)
-
-        self.up_key_holder = ActionHolder(
-            plugin_base=self,
-            action_base=UpKey,
-            action_id="dev_core447_OSPlugin::VM_VolumeUp",
-            action_name=self.lm.get("actions.up-key.name")
-        )
-        self.add_action_holder(self.up_key_holder)
-
-        self.down_key_holder = ActionHolder(
-            plugin_base=self,
-            action_base=DownKey,
-            action_id="dev_core447_OSPlugin::VM_VolumeDown",
-            action_name=self.lm.get("actions.down-key.name")
-        )
-        self.add_action_holder(self.down_key_holder)
-
-        self.move_right_holder = ActionHolder(
-            plugin_base=self,
-            action_base=MoveRight,
-            action_id="dev_core447_OSPlugin::VM_MoveRight",
-            action_name=self.lm.get("actions.move-right.name")
-        )
-        self.add_action_holder(self.move_right_holder)
-
-        self.move_left_holder = ActionHolder(
-            plugin_base=self,
-            action_base=MoveLeft,
-            action_id="dev_core447_OSPlugin::VM_MoveLeft",
-            action_name=self.lm.get("actions.move-left.name")
-        )
-        self.add_action_holder(self.move_left_holder)
-
         # Register plugin
         self.register(
             plugin_name=self.lm.get("plugin.name"),
@@ -183,19 +110,8 @@ class OSPlugin(PluginBase):
 
         self.add_css_stylesheet(os.path.join(self.PATH, "style.css"))
 
-        self.register_page(os.path.join(self.PATH, "VolumeMixer", "VolumeMixer.json"))
-
-        
-
     def init_vars(self):
         self.lm = self.locale_manager
         self.lm.set_to_os_default()
 
         self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
-        
-        ## Volume Mixer #TODO: Add multi deck support
-        self.original_page_path = None
-        self.start_index = 0
-        self.pulse = pulsectl.Pulse("stream-controller", threading_lock=True)
-        self.volume_increment = 0.1
-        self.volume_actions: list[ActionBase] = []
