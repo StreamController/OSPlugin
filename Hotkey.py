@@ -17,6 +17,8 @@ from evdev import categorize, UInput
 
 import threading
 from time import sleep
+import os
+from PIL import Image
 
 class Hotkey(ActionBase):
     ACTION_NAME = "Hotkey"
@@ -26,6 +28,9 @@ class Hotkey(ActionBase):
                  deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
         super().__init__(action_id=action_id, action_name=action_name,
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
+        
+        self.set_default_image(Image.open(os.path.join(self.plugin_base.PATH, "assets", "keyboard.png")))
+
     def on_ready(self):
         self.settings = self.get_settings()
         self.settings.setdefault("keys", [])
