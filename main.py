@@ -96,7 +96,8 @@ class OSPlugin(PluginBase):
             action_id="dev_core447_OSPlugin::Launch",
             action_name=self.lm.get("actions.launch.name")
         )
-        self.add_action_holder(self.launch_holder)
+        # Deactived because of problems in flatpak and app gathering
+        # self.add_action_holder(self.launch_holder)
 
         self.cpu_graph_holder = ActionHolder(
             plugin_base=self,

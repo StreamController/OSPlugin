@@ -42,7 +42,7 @@ class Launch(ActionBase):
         return apps
     
     def get_exec_path_by_name(self, name):
-        return self.apps.get(name)
+        return self.get_installed_apps().get(name)
     
     def get_name_by_exec_path(self, exec_path):
         for name, path in self.apps.items():
@@ -74,7 +74,7 @@ class Launch(ActionBase):
         for i in range(self.app_model.get_n_items()):
             self.app_model.remove(0)
 
-        for app in self.apps:
+        for app in self.get_installed_apps():
             self.app_model.append(app)
 
         self.app_model.append("None")
