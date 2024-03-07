@@ -4,6 +4,7 @@ from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.PluginManager.PluginBase import PluginBase
 
 import time
+import os
 
 # Import gtk modules
 import gi
@@ -16,6 +17,9 @@ class Delay(ActionBase):
                  deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
         super().__init__(action_id=action_id, action_name=action_name,
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
+        
+    def on_ready(self):
+        self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "hourglass_empty-inv.png"), size=0.8)
 
     def get_config_rows(self) -> list:
         self.delay_row = Adw.SpinRow().new_with_range(min=0, max=10, step=0.1)

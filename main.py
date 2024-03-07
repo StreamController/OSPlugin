@@ -103,8 +103,8 @@ class OSPlugin(PluginBase):
         self.register(
             plugin_name=self.lm.get("plugin.name"),
             github_repo="https://github.com/Core447/OSPlugin",
-            plugin_version="0.1",
-            app_version="0.1.1-alpha"
+            plugin_version="1.0.0",
+            app_version="1.0.0-alpha"
         )
 
 

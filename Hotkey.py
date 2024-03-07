@@ -29,11 +29,11 @@ class Hotkey(ActionBase):
         super().__init__(action_id=action_id, action_name=action_name,
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
         
-        self.set_default_image(Image.open(os.path.join(self.plugin_base.PATH, "assets", "keyboard.png")))
 
     def on_ready(self):
         self.settings = self.get_settings()
         self.settings.setdefault("keys", [])
+        self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "keyboard.png"))
 
     def get_config_rows(self) -> list:
         hotkey_row = HotkeyRow(self)

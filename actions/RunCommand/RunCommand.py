@@ -19,7 +19,8 @@ class RunCommand(ActionBase):
         super().__init__(action_id=action_id, action_name=action_name,
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
 
-        self.set_default_image(Image.open(os.path.join(self.plugin_base.PATH, "assets", "terminal.png")))
+    def on_ready(self):
+        self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "terminal.png"))
 
     def on_key_down(self):
         command = self.get_settings().get("command", None)

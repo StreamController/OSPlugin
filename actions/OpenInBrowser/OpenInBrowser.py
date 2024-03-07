@@ -18,7 +18,9 @@ class OpenInBrowser(ActionBase):
                  deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
         super().__init__(action_id=action_id, action_name=action_name,
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
-        self.set_default_image(Image.open(os.path.join(self.plugin_base.PATH, "assets", "web.png")))
+        
+    def on_ready(self):
+        self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "web.png"))
 
     def on_key_down(self):
         url = self.get_settings().get("url", None)
