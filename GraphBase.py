@@ -93,7 +93,14 @@ class GraphBase(ActionBase):
         return img
     
     def show_graph(self):
-        self.set_media(image=self.get_graph())
+        image = self.get_graph()
+        if image is None:
+            return
+        try:
+            image.verify()
+        except:
+            return
+        self.set_media(image=image)
     
     def conv_color_to_plt(self, color: list[int]) -> list[float]:
         float_color: list[float] = []
