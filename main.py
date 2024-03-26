@@ -23,13 +23,13 @@ from evdev import UInput
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 
-from plugins.dev_core447_OSPlugin.Hotkey import Hotkey
-from plugins.dev_core447_OSPlugin.Launch import Launch
-from plugins.dev_core447_OSPlugin.actions.RunCommand.RunCommand import RunCommand
-from plugins.dev_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
-from plugins.dev_core447_OSPlugin.actions.Delay.Delay import Delay
-from plugins.dev_core447_OSPlugin.CPU_Graph import CPU_Graph
-from plugins.dev_core447_OSPlugin.RAM_Graph import RAM_Graph
+from plugins.com_core447_OSPlugin.Hotkey import Hotkey
+from plugins.com_core447_OSPlugin.Launch import Launch
+from plugins.com_core447_OSPlugin.actions.RunCommand.RunCommand import RunCommand
+from plugins.com_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
+from plugins.com_core447_OSPlugin.actions.Delay.Delay import Delay
+from plugins.com_core447_OSPlugin.CPU_Graph import CPU_Graph
+from plugins.com_core447_OSPlugin.RAM_Graph import RAM_Graph
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -45,7 +45,7 @@ class OSPlugin(PluginBase):
         self.run_command_holder = ActionHolder(
             plugin_base=self,
             action_base=RunCommand,
-            action_id="dev_core447_OSPlugin::RunCommand",
+            action_id="com_core447_OSPlugin::RunCommand",
             action_name=self.lm.get("actions.run-command.name")
         )
         self.add_action_holder(self.run_command_holder)
@@ -53,7 +53,7 @@ class OSPlugin(PluginBase):
         self.open_in_browser_holder = ActionHolder(
             plugin_base=self,
             action_base=OpenInBrowser,
-            action_id="dev_core447_OSPlugin::OpenInBrowser",
+            action_id="com_core447_OSPlugin::OpenInBrowser",
             action_name=self.lm.get("actions.open-in-browser.name")
         )
         self.add_action_holder(self.open_in_browser_holder)
@@ -61,7 +61,7 @@ class OSPlugin(PluginBase):
         self.hotkey_holder = ActionHolder(
             plugin_base=self,
             action_base=Hotkey,
-            action_id="dev_core447_OSPlugin::Hotkey",
+            action_id="com_core447_OSPlugin::Hotkey",
             action_name=self.lm.get("actions.hotkey.name")
         )
         self.add_action_holder(self.hotkey_holder)
@@ -69,7 +69,7 @@ class OSPlugin(PluginBase):
         self.delay_holder = ActionHolder(
             plugin_base=self,
             action_base=Delay,
-            action_id="dev_core447_OSPlugin::Delay",
+            action_id="com_core447_OSPlugin::Delay",
             action_name=self.lm.get("actions.delay.name")
         )
         self.add_action_holder(self.delay_holder)
@@ -77,7 +77,7 @@ class OSPlugin(PluginBase):
         self.launch_holder = ActionHolder(
             plugin_base=self,
             action_base=Launch,
-            action_id="dev_core447_OSPlugin::Launch",
+            action_id="com_core447_OSPlugin::Launch",
             action_name=self.lm.get("actions.launch.name")
         )
         # Deactived because of problems in flatpak and app gathering
@@ -86,7 +86,7 @@ class OSPlugin(PluginBase):
         self.cpu_graph_holder = ActionHolder(
             plugin_base=self,
             action_base=CPU_Graph,
-            action_id="dev_core447_OSPlugin::CPU_Graph",
+            action_id="com_core447_OSPlugin::CPU_Graph",
             action_name=self.lm.get("actions.cpu-graph.name")
         )
         self.add_action_holder(self.cpu_graph_holder)
@@ -94,7 +94,7 @@ class OSPlugin(PluginBase):
         self.ram_graph_holder = ActionHolder(
             plugin_base=self,
             action_base=RAM_Graph,
-            action_id="dev_core447_OSPlugin::RAM_Graph",
+            action_id="com_core447_OSPlugin::RAM_Graph",
             action_name=self.lm.get("actions.ram-graph.name")
         )
         self.add_action_holder(self.ram_graph_holder)

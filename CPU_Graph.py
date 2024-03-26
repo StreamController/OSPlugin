@@ -1,4 +1,4 @@
-from plugins.dev_core447_OSPlugin.GraphBase import GraphBase
+from plugins.com_core447_OSPlugin.GraphBase import GraphBase
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 from src.backend.PluginManager.PluginBase import PluginBase
