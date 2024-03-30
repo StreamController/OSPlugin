@@ -40,6 +40,7 @@ class OSPlugin(PluginBase):
         self.PLUGIN_NAME = "OS"
         self.GITHUB_REPO = "https://github.com/your-github-repo"
         super().__init__()
+        self.ui = None
         self.init_vars()
 
         self.run_command_holder = ActionHolder(
@@ -64,7 +65,8 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::Hotkey",
             action_name=self.lm.get("actions.hotkey.name")
         )
-        self.add_action_holder(self.hotkey_holder)
+        if self.ui is not None:
+            self.add_action_holder(self.hotkey_holder)
 
         self.delay_holder = ActionHolder(
             plugin_base=self,
@@ -114,4 +116,7 @@ class OSPlugin(PluginBase):
         self.lm = self.locale_manager
         self.lm.set_to_os_default()
 
-        self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
+        try:
+            self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
+        except Exception as e:
+            log.error(e)
