@@ -11,7 +11,7 @@ from gi.repository import Gtk, Adw, Gdk
 
 import evdev
 
-from evdev import ecodes as e
+from evdev import ecodes
 from selectors import DefaultSelector, EVENT_READ
 from evdev import categorize, UInput
 
@@ -42,7 +42,7 @@ class Hotkey(ActionBase):
     
     def on_key_down(self):
         for key in self.settings.get("keys", []):
-            self.plugin_base.ui.write(e.EV_KEY, key[0], key[1])
+            self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
             self.plugin_base.ui.syn()
 
 

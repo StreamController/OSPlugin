@@ -17,7 +17,7 @@ import math
 import threading
 import subprocess
 import time
-from evdev import ecodes as e
+from evdev import ecodes
 from evdev import UInput
 
 from src.backend.DeckManagement.DeckController import DeckController
@@ -117,6 +117,6 @@ class OSPlugin(PluginBase):
         self.lm.set_to_os_default()
 
         try:
-            self.ui = UInput({e.EV_KEY: range(0, 255)}, name="stream-controller")
+            self.ui = UInput({ecodes.EV_KEY: range(0, 255)}, name="stream-controller")
         except Exception as e:
             log.error(e)
