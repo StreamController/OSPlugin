@@ -1,3 +1,4 @@
+from threading import Thread
 from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
@@ -5,6 +6,7 @@ from src.backend.PluginManager.PluginBase import PluginBase
 
 import matplotlib.pyplot as plt
 import matplotlib
+from multiprocessing import Process, Queue
 # Use different backend to prevent errors with running plt in different threads
 matplotlib.use('agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -18,6 +20,11 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gdk
 
+# Import globals
+import globals as gl
+
+from src.Signals import Signals
+
 class GraphBase(ActionBase):
     def __init__(self, action_id: str, action_name: str,
                  deck_controller: "DeckController", page: Page, coords: str, plugin_base: PluginBase):
@@ -25,6 +32,18 @@ class GraphBase(ActionBase):
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
 
         self.percentages: list[float] = []
+
+        self.task_queue = Queue()
+        self.result_queue = Queue()
+        # self.process = Process(target=self.worker, args=(self.task_queue, self.result_queue), name="GraphBaseCreator")
+        self.process = GraphCreator(task_queue=self.task_queue, result_queue=self.result_queue)
+        self.process.start()
+
+        gl.signal_manager.connect_signal(Signals.AppQuit, self.stop_process)
+
+    def stop_process(self, *args):
+        print("stop graph base")
+        self.task_queue.put((None, None))
 
     def set_percentages_lenght(self, length: int):
         if len(self.percentages) > length:
@@ -38,75 +57,19 @@ class GraphBase(ActionBase):
     def get_graph(self) -> Image:
         ## Get vars
         settings = self.get_settings()
-        line_color = self.conv_color_to_plt(settings.get("line-color", [255, 255, 255, 255]))
-        fill_color = self.conv_color_to_plt(settings.get("fill-color", [255, 255, 255, 150]))
-        line_width = settings.get("line-width", 5)
         time_period = settings.get("time-period", 15)
-        dynamic_scaling = settings.get("dynamic-scaling", False)
-
         self.set_percentages_lenght(time_period)
 
-        # Create a new figure with a transparent background
-        fig = plt.figure(figsize=(6, 6))
-        fig.patch.set_alpha(0)
-        fig.patch.set_facecolor('none')
+        self.task_queue.put((settings, self.percentages))
 
-        # Set the FigureCanvas to the backend
-        canvas = FigureCanvas(fig)
-
-        # Plot the data with a transparent background
-        ax = plt.Axes(fig, [0., 0., 1., 1.])
-        ax.set_axis_off()
-        fig.add_axes(ax)
-
-        ax.plot(self.percentages, color=line_color, linewidth=line_width)
-        ax.fill_between(range(len(self.percentages)), self.percentages, color=fill_color[:3], alpha=fill_color[3])
-
-        # Hide the spines
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-
-        # Turn off the axis and set margins to zero
-        ax.margins(0)
-        ax.axis('off')
-
-        # Set the y-axis to range from 0 to 100
-        if not dynamic_scaling:
-            ax.set_ylim(0, 100)
-
-        # Draw the canvas and retrieve the buffer
-        canvas.draw()
-        buf = io.BytesIO()
-        canvas.print_png(buf)
-
-        # Convert buffer to a Pillow Image
-        buf.seek(0)
-        img = Image.open(buf)
-
-        # The Pillow Image now has a transparent background
-        # img.show()  # If you want to display the image
-        # img.save('plot.png')  # If you want to save the image
-
-        plt.close()  # Close the plot to free resources
-
-        # Now 'img' is a Pillow Image object with a transparent background
+        img = self.result_queue.get()
         return img
     
     def show_graph(self):
         image = self.get_graph()
         if image is None:
             return
-        try:
-            image.verify()
-        except:
-            return
         self.set_media(image=image)
-    
-    def conv_color_to_plt(self, color: list[int]) -> list[float]:
-        float_color: list[float] = []
-        for c in color:
-            float_color.append(c / 255)
-        return float_color
     
     def get_config_rows(self) -> list:
         self.line_color_row = ColorRow()
@@ -231,3 +194,76 @@ class ColorRow(Adw.PreferencesRow):
 
         self.color_button = Gtk.ColorButton(use_alpha=True)
         self.main_box.append(self.color_button)
+
+class GraphCreator(Process):
+    def __init__(self, task_queue: Queue, result_queue: Queue):
+        super().__init__(daemon=True, name="GraphCreator")
+        self.task_queue = task_queue
+        self.result_queue = result_queue
+
+    def run(self):
+        while True:
+            settings, percentages = self.task_queue.get()
+            if None in [settings, percentages]:
+                break
+            result = self.generate_graph(settings, percentages)
+            self.result_queue.put(result)
+        print("GraphCreator stopped")
+
+    def generate_graph(self, settings: dict, percentages: list[float]):
+        line_color = self.conv_color_to_plt(settings.get("line-color", [255, 255, 255, 255]))
+        fill_color = self.conv_color_to_plt(settings.get("fill-color", [255, 255, 255, 150]))
+        line_width = settings.get("line-width", 5)
+        dynamic_scaling = settings.get("dynamic-scaling", False)
+
+        # Create a new figure with a transparent background
+        fig = plt.figure(figsize=(6, 6))
+        fig.patch.set_alpha(0)
+        fig.patch.set_facecolor('none')
+
+        # Set the FigureCanvas to the backend
+        canvas = FigureCanvas(fig)
+
+        # Plot the data with a transparent background
+        ax = plt.Axes(fig, [0., 0., 1., 1.])
+        ax.set_axis_off()
+        fig.add_axes(ax)
+
+        ax.plot(percentages, color=line_color, linewidth=line_width)
+        ax.fill_between(range(len(percentages)), percentages, color=fill_color[:3], alpha=fill_color[3])
+
+        # Hide the spines
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+
+        # Turn off the axis and set margins to zero
+        ax.margins(0)
+        ax.axis('off')
+
+        # Set the y-axis to range from 0 to 100
+        if not dynamic_scaling:
+            ax.set_ylim(0, 100)
+
+        # Draw the canvas and retrieve the buffer
+        canvas.draw()
+        buf = io.BytesIO()
+        canvas.print_png(buf)
+
+        # Convert buffer to a Pillow Image
+        buf.seek(0)
+        img = Image.open(buf)
+
+        # The Pillow Image now has a transparent background
+        # img.show()  # If you want to display the image
+        # img.save('plot.png')  # If you want to save the image
+
+        plt.close()  # Close the plot to free resources
+
+        # result_queue.put(img)
+        return img
+
+    def conv_color_to_plt(self, color: list[int]) -> list[float]:
+        float_color: list[float] = []
+        for c in color:
+            float_color.append(c / 255)
+        return float_color

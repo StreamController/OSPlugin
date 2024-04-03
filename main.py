@@ -91,7 +91,7 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::CPU_Graph",
             action_name=self.lm.get("actions.cpu-graph.name")
         )
-        # self.add_action_holder(self.cpu_graph_holder) #FIXME: too unstable
+        self.add_action_holder(self.cpu_graph_holder) #FIXME: too unstable
 
         self.ram_graph_holder = ActionHolder(
             plugin_base=self,
@@ -99,7 +99,7 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::RAM_Graph",
             action_name=self.lm.get("actions.ram-graph.name")
         )
-        # self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
+        self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
 
         # Register plugin
         self.register(
