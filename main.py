@@ -68,15 +68,6 @@ class OSPlugin(PluginBase):
         if self.ui is not None:
             self.add_action_holder(self.hotkey_holder)
 
-        self.write_text_holder = ActionHolder(
-            plugin_base=self,
-            action_base=WriteText,
-            action_id="com_core447_OSPlugin::WriteText",
-            action_name="Write Text"
-        )
-        if self.ui is not None:
-            self.add_action_holder(self.write_text_holder)
-
         self.delay_holder = ActionHolder(
             plugin_base=self,
             action_base=Delay,
@@ -110,13 +101,6 @@ class OSPlugin(PluginBase):
         )
         # self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
 
-        self.own_memory_holder = ActionHolder(
-            plugin_base=self,
-            action_base=OwnMemory,
-            action_id="com_core447_OSPlugin::OwnMemory",
-            action_name="Own Memory"
-        )
-        self.add_action_holder(self.own_memory_holder)
 
         # Register plugin
         self.register(
