@@ -30,8 +30,6 @@ from plugins.com_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import Ope
 from plugins.com_core447_OSPlugin.actions.Delay.Delay import Delay
 from plugins.com_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.com_core447_OSPlugin.RAM_Graph import RAM_Graph
-from .OwnMemory import OwnMemory
-from plugins.com_core447_OSPlugin.actions.WriteText.WriteText import WriteText
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
