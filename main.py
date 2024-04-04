@@ -30,6 +30,8 @@ from plugins.com_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import Ope
 from plugins.com_core447_OSPlugin.actions.Delay.Delay import Delay
 from plugins.com_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.com_core447_OSPlugin.RAM_Graph import RAM_Graph
+from .OwnMemory import OwnMemory
+from plugins.com_core447_OSPlugin.actions.WriteText.WriteText import WriteText
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -68,6 +70,15 @@ class OSPlugin(PluginBase):
         if self.ui is not None:
             self.add_action_holder(self.hotkey_holder)
 
+        self.write_text_holder = ActionHolder(
+            plugin_base=self,
+            action_base=WriteText,
+            action_id="com_core447_OSPlugin::WriteText",
+            action_name="Write Text"
+        )
+        if self.ui is not None:
+            self.add_action_holder(self.write_text_holder)
+
         self.delay_holder = ActionHolder(
             plugin_base=self,
             action_base=Delay,
@@ -91,7 +102,7 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::CPU_Graph",
             action_name=self.lm.get("actions.cpu-graph.name")
         )
-        self.add_action_holder(self.cpu_graph_holder) #FIXME: too unstable
+        # self.add_action_holder(self.cpu_graph_holder) #FIXME: too unstable
 
         self.ram_graph_holder = ActionHolder(
             plugin_base=self,
@@ -99,7 +110,15 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::RAM_Graph",
             action_name=self.lm.get("actions.ram-graph.name")
         )
-        self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
+        # self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
+
+        self.own_memory_holder = ActionHolder(
+            plugin_base=self,
+            action_base=OwnMemory,
+            action_id="com_core447_OSPlugin::OwnMemory",
+            action_name="Own Memory"
+        )
+        self.add_action_holder(self.own_memory_holder)
 
         # Register plugin
         self.register(
