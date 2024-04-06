@@ -38,12 +38,33 @@ class Hotkey(ActionBase):
     def get_config_rows(self) -> list:
         hotkey_row = HotkeyRow(self)
 
-        return [hotkey_row]
+        self.delay_row = Adw.SpinRow.new_with_range(min=0, max=1, step=0.01)
+        self.delay_row.set_title(self.plugin_base.lm.get("actions.hotkey.delay.title"))
+        self.delay_row.set_subtitle(self.plugin_base.lm.get("actions.hotkey.delay.subtitle"))
+
+        self.load_config_values()
+
+        self.delay_row.connect("changed", self.on_delay_changed)
+
+        return [hotkey_row, self.delay_row]
+    
+    def load_config_values(self):
+        settings = self.get_settings()
+        self.delay_row.set_value(settings.get("delay", 0.02))
+
     
     def on_key_down(self):
-        for key in self.settings.get("keys", []):
+        keys = self.settings.get("keys", [])
+        delay = self.get_settings().get("delay", 0.02)
+        for key in keys:
             self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
             self.plugin_base.ui.syn()
+            sleep(delay)
+
+    def on_delay_changed(self, spin_row):
+        settings = self.get_settings()
+        settings["delay"] = spin_row.get_value()
+        self.set_settings(settings)
 
 
 
@@ -54,7 +75,7 @@ class HotkeyRow(Adw.PreferencesRow):
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True)
         self.set_child(self.main_box)
 
-        self.hotkey_label = Gtk.Label(hexpand=True)
+        self.hotkey_label = Gtk.Label(hexpand=True, label=hotkey.plugin_base.lm.get("actions.hotkey.label"), xalign=0, margin_start=12)
         self.main_box.append(self.hotkey_label)
 
         self.config_button = Gtk.Button(label="Config")

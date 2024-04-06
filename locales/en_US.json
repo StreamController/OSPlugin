@@ -15,5 +15,8 @@
     "actions.hotkey.recorder.confirm-text": "Confirm",
     "actions.hotkey.recorder.clear-text": "Clear",
     "actions.click.name": "Click",
-    "actions.move-xy.name": "Move XY"
+    "actions.move-xy.name": "Move XY",
+    "actions.hotkey.delay.title": "Delay (s):",
+    "actions.hotkey.delay.subtitle": "The delay between each key press"
+    "actions.hotkey.label": "Keys"
 }
