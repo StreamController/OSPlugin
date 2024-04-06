@@ -59,7 +59,7 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::OpenInBrowser",
             action_name=self.lm.get("actions.open-in-browser.name")
         )
-        self.add_action_holder(self.open_in_browser_holder)
+        # self.add_action_holder(self.open_in_browser_holder) #FIXME: Not working in flatpak right now
 
         self.hotkey_holder = ActionHolder(
             plugin_base=self,
