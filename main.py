@@ -30,6 +30,8 @@ from plugins.com_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import Ope
 from plugins.com_core447_OSPlugin.actions.Delay.Delay import Delay
 from plugins.com_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.com_core447_OSPlugin.RAM_Graph import RAM_Graph
+from .MoveXY import MoveXY
+from .Click import Click
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -101,6 +103,22 @@ class OSPlugin(PluginBase):
         )
         # self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
 
+        self.move_xy_holder = ActionHolder(
+            plugin_base=self,
+            action_base=MoveXY,
+            action_id="com_core447_OSPlugin::MoveXY",
+            action_name=self.lm.get("actions.move-xy.name")
+        )
+        self.add_action_holder(self.move_xy_holder)
+
+        self.click_holder = ActionHolder(
+            plugin_base=self,
+            action_base=Click,
+            action_id="com_core447_OSPlugin::Click",
+            action_name=self.lm.get("actions.click.name")
+        )
+        self.add_action_holder(self.click_holder)
+
 
         # Register plugin
         self.register(
@@ -117,7 +135,9 @@ class OSPlugin(PluginBase):
         self.lm = self.locale_manager
         self.lm.set_to_os_default()
 
+        self.ui = None
         try:
-            self.ui = UInput({ecodes.EV_KEY: range(0, 255)}, name="stream-controller")
+            self.ui = UInput({ecodes.EV_KEY: range(0, 300),
+                         ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y]}, name="stream-controller-os-plugin")
         except Exception as e:
             log.error(e)
