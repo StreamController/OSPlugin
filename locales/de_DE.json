@@ -11,6 +11,7 @@
     "actions.launch.name": "Anwendung starten",
     "actions.cpu-graph.name": "CPU-Graph",
     "actions.ram-graph.name": "RAM-Graph",
+    "actions.graph-base.memory-warning": "Diese Aktion könnte zu hohem Arbeitsspeicherverbrauch führen.",
     "plugin.name": "Betriebssystem",
     "actions.hotkey.recorder.confirm-text": "Bestätigen",
     "actions.hotkey.recorder.clear-text": "Zurücksetzen",

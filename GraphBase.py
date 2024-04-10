@@ -70,6 +70,9 @@ class GraphBase(ActionBase):
         if image is None:
             return
         self.set_media(image=image)
+
+    def get_custom_config_area(self):
+        return Gtk.Label(label=self.plugin_base.lm.get("actions.graph-base.memory-warning"), css_classes=["destructive-action"])
     
     def get_config_rows(self) -> list:
         self.line_color_row = ColorRow()
