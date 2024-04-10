@@ -13,5 +13,7 @@
     "actions.ram-graph.name": "RAM-Graph",
     "plugin.name": "Betriebssystem",
     "actions.hotkey.recorder.confirm-text": "Bestätigen",
-    "actions.hotkey.recorder.clear-text": "Zurücksetzen"
+    "actions.hotkey.recorder.clear-text": "Zurücksetzen",
+    "actions.cpu.name": "CPU Nutzung",
+    "actions.ram.name": "Arbeitsspeicher Nutzung"
 }

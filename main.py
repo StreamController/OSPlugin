@@ -32,6 +32,8 @@ from plugins.com_core447_OSPlugin.CPU_Graph import CPU_Graph
 from plugins.com_core447_OSPlugin.RAM_Graph import RAM_Graph
 from .MoveXY import MoveXY
 from .Click import Click
+from .actions.CPU.CPU import CPU
+from .actions.RAM.RAM import RAM
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -118,6 +120,22 @@ class OSPlugin(PluginBase):
             action_name=self.lm.get("actions.click.name")
         )
         self.add_action_holder(self.click_holder)
+
+        self.cpu_holder = ActionHolder(
+            plugin_base=self,
+            action_base=CPU,
+            action_id="com_core447_OSPlugin::CPU",
+            action_name=self.lm.get("actions.cpu.name")
+        )
+        self.add_action_holder(self.cpu_holder)
+
+        self.ram_holder = ActionHolder(
+            plugin_base=self,
+            action_base=RAM,
+            action_id="com_core447_OSPlugin::RAM",
+            action_name=self.lm.get("actions.ram.name")
+        )
+        self.add_action_holder(self.ram_holder)
 
 
         # Register plugin

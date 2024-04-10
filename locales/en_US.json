@@ -18,5 +18,7 @@
     "actions.move-xy.name": "Move XY",
     "actions.hotkey.delay.title": "Delay (s):",
     "actions.hotkey.delay.subtitle": "The delay between each key press",
-    "actions.hotkey.label": "Keys"
+    "actions.hotkey.label": "Keys",
+    "actions.cpu.name": "CPU Usage",
+    "actions.ram.name": "Memory Usage"
 }
