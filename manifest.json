@@ -2,5 +2,6 @@
     "version": "1.0.0",
     "thumbnail": "store/Thumbnail.png",
     "id": "com_core447_OSPlugin",
-    "name": "OS"
+    "name": "OS",
+    "short-description": "Control your OS"
 }
