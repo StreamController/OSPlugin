@@ -16,5 +16,6 @@
     "actions.hotkey.recorder.confirm-text": "Bestätigen",
     "actions.hotkey.recorder.clear-text": "Zurücksetzen",
     "actions.cpu.name": "CPU Nutzung",
-    "actions.ram.name": "Arbeitsspeicher Nutzung"
+    "actions.ram.name": "Arbeitsspeicher Nutzung",
+    "actions.write-text.name": "Text schreiben"
 }

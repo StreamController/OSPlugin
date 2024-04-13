@@ -21,5 +21,6 @@
     "actions.hotkey.delay.subtitle": "The delay between each key press",
     "actions.hotkey.label": "Keys",
     "actions.cpu.name": "CPU Usage",
-    "actions.ram.name": "Memory Usage"
+    "actions.ram.name": "Memory Usage",
+    "actions.write-text.name": "Write Text"
 }

@@ -34,6 +34,7 @@ from .MoveXY import MoveXY
 from .Click import Click
 from .actions.CPU.CPU import CPU
 from .actions.RAM.RAM import RAM
+from .actions.WriteText.WriteText import WriteText
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -137,6 +138,13 @@ class OSPlugin(PluginBase):
         )
         self.add_action_holder(self.ram_holder)
 
+        self.write_text_holder = ActionHolder(
+            plugin_base=self,
+            action_base=WriteText,
+            action_id="com_core447_OSPlugin::WriteText",
+            action_name=self.lm.get("actions.write-text.name")
+        )
+        self.add_action_holder(self.write_text_holder)
 
         # Register plugin
         self.register(
