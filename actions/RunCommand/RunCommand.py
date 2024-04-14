@@ -56,7 +56,7 @@ class RunCommand(ActionBase):
         if self.is_in_flatpak():
             command = "flatpak-spawn --host " + command
 
-        subprocess.Popen(command, shell=True, start_new_session=True, cwd="~") # If cwd is not set in the flatpak /app/bin/StreamController cannot be found
+        subprocess.Popen(command, shell=True, start_new_session=True, cwd=os.path.expanduser("~")) # If cwd is not set in the flatpak /app/bin/StreamController cannot be found
 
     def is_in_flatpak(self) -> bool:
         return os.path.isfile('/.flatpak-info')
