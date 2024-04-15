@@ -144,7 +144,8 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::WriteText",
             action_name=self.lm.get("actions.write-text.name")
         )
-        self.add_action_holder(self.write_text_holder)
+        if self.ui is not None:
+            self.add_action_holder(self.write_text_holder)
 
         # Register plugin
         self.register(
