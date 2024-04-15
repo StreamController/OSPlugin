@@ -29,6 +29,7 @@ class Hotkey(ActionBase):
         super().__init__(action_id=action_id, action_name=action_name,
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
         
+        self.HAS_CONFIGURATION = True
 
     def on_ready(self):
         self.settings = self.get_settings()
