@@ -30,6 +30,9 @@ class Hotkey(ActionBase):
             deck_controller=deck_controller, page=page, coords=coords, plugin_base=plugin_base)
         
         self.HAS_CONFIGURATION = True
+        
+        self.pressed = False
+        
 
     def on_ready(self):
         self.settings = self.get_settings()
@@ -43,29 +46,120 @@ class Hotkey(ActionBase):
         self.delay_row.set_title(self.plugin_base.lm.get("actions.hotkey.delay.title"))
         self.delay_row.set_subtitle(self.plugin_base.lm.get("actions.hotkey.delay.subtitle"))
 
+        self.repeat_row = Adw.SwitchRow(title=self.plugin_base.lm.get("actions.hotkey.repeat.title"), subtitle=self.plugin_base.lm.get("actions.hotkey.repeat.subtitle"))
+        self.hold_until_release = Adw.SwitchRow(title=self.plugin_base.lm.get("actions.hotkey.hold_until_release.title"), subtitle=self.plugin_base.lm.get("actions.hotkey.hold_until_release.subtitle"))
+
         self.load_config_values()
 
         self.delay_row.connect("changed", self.on_delay_changed)
+        self.repeat_row.connect("notify::active", self.on_repeat_toggled)
+        self.hold_until_release.connect("notify::active", self.on_hold_toggled)
 
-        return [hotkey_row, self.delay_row]
+        return [hotkey_row, self.delay_row, self.repeat_row, self.hold_until_release]
     
     def load_config_values(self):
         settings = self.get_settings()
         self.delay_row.set_value(settings.get("delay", 0.02))
-
-    
-    def on_key_down(self):
-        keys = self.settings.get("keys", [])
-        delay = self.get_settings().get("delay", 0.02)
-        for key in keys:
-            self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
-            self.plugin_base.ui.syn()
-            sleep(delay)
+        self.repeat_row.set_active(settings.get("repeat", False))
+        if not self.repeat_row.get_active():
+            self.hold_until_release.set_active(settings.get("hold_until_release", False))
 
     def on_delay_changed(self, spin_row):
         settings = self.get_settings()
         settings["delay"] = spin_row.get_value()
         self.set_settings(settings)
+
+    def on_repeat_toggled(self, *args):
+        settings = self.get_settings()
+        settings["hold_until_release"] = False
+        settings["repeat"] = self.repeat_row.get_active()
+        self.set_settings(settings)
+
+        self.hold_until_release.disconnect_by_func(self.on_hold_toggled)
+        self.hold_until_release.set_active(False)
+        self.hold_until_release.connect("notify::active", self.on_hold_toggled)
+
+    def on_hold_toggled(self, *args):
+        settings = self.get_settings()
+        settings["repeat"] = False
+        settings["hold_until_release"] = self.hold_until_release.get_active()
+        self.set_settings(settings)
+
+        self.repeat_row.disconnect_by_func(self.on_repeat_toggled)
+        self.repeat_row.set_active(False)
+        self.repeat_row.connect("notify::active", self.on_repeat_toggled)
+    
+    def on_key_down(self):
+        self.pressed = True
+
+        settings = self.get_settings()
+        if settings.get("repeat", False):
+            thread = threading.Thread(target=self.press_keys_in_loop, daemon=True, name="key_press")
+            thread.start()
+        elif settings.get("hold_until_release", False):
+            self.press_down_keys()
+        else:
+            self.press_keys()
+
+
+
+
+    def on_key_up(self):
+        self.pressed = False
+
+        settings = self.get_settings()
+        if settings.get("hold_until_release", False):
+            self.press_up_keys()
+
+
+    def press_keys_in_loop(self):
+        settings = self.get_settings()
+        keys = settings.get("keys", [])
+        delay = settings.get("delay", 0.02)
+        repeat = settings.get("repeat", False)
+
+        while self.pressed:
+            for key in keys:
+                self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
+                self.plugin_base.ui.syn()
+                sleep(delay)
+
+            if not repeat:
+                break
+
+    def press_keys(self):
+        settings = self.get_settings()
+        keys = settings.get("keys", [])
+        delay = settings.get("delay", 0.02)
+
+        for key in keys:
+            self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
+            self.plugin_base.ui.syn()
+            sleep(delay)
+
+    def press_down_keys(self):
+        settings = self.get_settings()
+        keys = settings.get("keys", [])
+        delay = settings.get("delay", 0.02)
+
+        for key in keys:
+            if key[1] == 1:
+                self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
+                self.plugin_base.ui.syn()
+                sleep(delay)
+
+    def press_up_keys(self):
+        settings = self.get_settings()
+        keys = settings.get("keys", [])
+        delay = settings.get("delay", 0.02)
+
+        for key in keys:
+            if key[1] == 0:
+                self.plugin_base.ui.write(ecodes.EV_KEY, key[0], key[1])
+                self.plugin_base.ui.syn()
+                sleep(delay)
+
+    
 
 
 

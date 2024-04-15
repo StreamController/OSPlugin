@@ -22,5 +22,9 @@
     "actions.hotkey.label": "Keys",
     "actions.cpu.name": "CPU Usage",
     "actions.ram.name": "Memory Usage",
-    "actions.write-text.name": "Write Text"
+    "actions.write-text.name": "Write Text",
+    "actions.hotkey.repeat.title": "Repeat while holding",
+    "actions.hotkey.repeat.subtitle": "Repeat the set hotkey while holding the button",
+    "actions.hotkey.hold_until_release.title": "Hold until release",
+    "actions.hotkey.hold_until_release.subtitle": "Hold the set hotkey until the button is released"
 }
