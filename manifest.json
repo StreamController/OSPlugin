@@ -3,5 +3,17 @@
     "thumbnail": "store/Thumbnail.png",
     "id": "com_core447_OSPlugin",
     "name": "OS",
+    "descriptions": {
+        "en_US": "Control your operating system."
+    },
+    "short-descriptions": {
+        "en_US": "Control your OS"
+    },
+    "tags": ["Utility"],
+    "minimum-app-version": "1.0.0",
+    "app-version": "1.4.11-beta",
+
+    
+    "description": "Control your operating system.",
     "short-description": "Control your OS"
 }
