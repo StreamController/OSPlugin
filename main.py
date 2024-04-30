@@ -23,13 +23,13 @@ from evdev import UInput
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 
-from plugins.com_core447_OSPlugin.Hotkey import Hotkey
-from plugins.com_core447_OSPlugin.Launch import Launch
-from plugins.com_core447_OSPlugin.actions.RunCommand.RunCommand import RunCommand
-from plugins.com_core447_OSPlugin.actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
-from plugins.com_core447_OSPlugin.actions.Delay.Delay import Delay
-from plugins.com_core447_OSPlugin.CPU_Graph import CPU_Graph
-from plugins.com_core447_OSPlugin.RAM_Graph import RAM_Graph
+from .Hotkey import Hotkey
+from .Launch import Launch
+from .actions.RunCommand.RunCommand import RunCommand
+from .actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
+from .actions.Delay.Delay import Delay
+from .CPU_Graph import CPU_Graph
+from .RAM_Graph import RAM_Graph
 from .MoveXY import MoveXY
 from .Click import Click
 from .actions.CPU.CPU import CPU
