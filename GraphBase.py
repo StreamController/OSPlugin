@@ -183,6 +183,8 @@ class GraphBase(ActionBase):
 
         self.show_graph()
 
+    def on_removed_from_cache(self) -> None:
+        self.task_queue.put((None, None))
 
 class ColorRow(Adw.PreferencesRow):
     def __init__(self):
