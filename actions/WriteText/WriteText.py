@@ -49,6 +49,10 @@ class WriteText(ActionBase):
         self.load_defaults()
 
         self.buffer.connect("changed", self.on_change)
+
+        if self.plugin_base.ui is None:
+            self.main_box.append(Gtk.Label(label="Missing permission. Please add <a href=\"https://github.com/streamcontroller/osplugin?tab=readme-ov-file#hotkeys--write-text\">this</a> udev rule", use_markup=True,
+                         css_classes=["bold", "warning"]))
         
         return self.main_box
     

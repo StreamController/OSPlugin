@@ -70,8 +70,7 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::Hotkey",
             action_name=self.lm.get("actions.hotkey.name")
         )
-        if self.ui is not None:
-            self.add_action_holder(self.hotkey_holder)
+        self.add_action_holder(self.hotkey_holder)
 
         self.delay_holder = ActionHolder(
             plugin_base=self,
@@ -144,8 +143,7 @@ class OSPlugin(PluginBase):
             action_id="com_core447_OSPlugin::WriteText",
             action_name=self.lm.get("actions.write-text.name")
         )
-        if self.ui is not None:
-            self.add_action_holder(self.write_text_holder)
+        self.add_action_holder(self.write_text_holder)
 
         # Register plugin
         self.register(

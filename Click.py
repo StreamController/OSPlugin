@@ -33,3 +33,10 @@ class Click(ActionBase):
         time.sleep(0.01)
         self.plugin_base.ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 0)
         self.plugin_base.ui.syn()
+
+    def get_custom_config_area(self):
+        if self.plugin_base.ui is not None:
+            return
+        
+        return Gtk.Label(label="Missing permission. Please add <a href=\"https://github.com/streamcontroller/osplugin?tab=readme-ov-file#hotkeys--write-text\">this</a> udev rule", use_markup=True,
+                         css_classes=["bold", "warning"])

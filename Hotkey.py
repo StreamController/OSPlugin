@@ -157,8 +157,12 @@ class Hotkey(ActionBase):
                 self.plugin_base.ui.syn()
                 sleep(delay)
 
-    
-
+    def get_custom_config_area(self):
+        if self.plugin_base.ui is not None:
+            return
+        
+        return Gtk.Label(label="Missing permission. Please add <a href=\"https://github.com/streamcontroller/osplugin?tab=readme-ov-file#hotkeys--write-text\">this</a> udev rule", use_markup=True,
+                         css_classes=["bold", "warning"])
 
 
 class HotkeyRow(Adw.PreferencesRow):
