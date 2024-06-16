@@ -1,6 +1,8 @@
 from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.PluginManager.PluginBase import PluginBase
 from src.backend.PluginManager.ActionHolder import ActionHolder
+from src.backend.DeckManagement.InputIdentifier import Input
+from src.backend.PluginManager.ActionInputSupport import ActionInputSupport
 
 # Import gtk modules
 import gi
@@ -51,40 +53,65 @@ class OSPlugin(PluginBase):
         self.run_command_holder = ActionHolder(
             plugin_base=self,
             action_base=RunCommand,
-            action_id="com_core447_OSPlugin::RunCommand",
-            action_name=self.lm.get("actions.run-command.name")
+            action_id_suffix="RunCommand",
+            action_name=self.lm.get("actions.run-command.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         self.add_action_holder(self.run_command_holder)
 
         self.open_in_browser_holder = ActionHolder(
             plugin_base=self,
             action_base=OpenInBrowser,
-            action_id="com_core447_OSPlugin::OpenInBrowser",
-            action_name=self.lm.get("actions.open-in-browser.name")
+            action_id_suffix="OpenInBrowser",
+            action_name=self.lm.get("actions.open-in-browser.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         # self.add_action_holder(self.open_in_browser_holder) #FIXME: Not working in flatpak right now
 
         self.hotkey_holder = ActionHolder(
             plugin_base=self,
             action_base=Hotkey,
-            action_id="com_core447_OSPlugin::Hotkey",
-            action_name=self.lm.get("actions.hotkey.name")
+            action_id_suffix="Hotkey",
+            action_name=self.lm.get("actions.hotkey.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         self.add_action_holder(self.hotkey_holder)
 
         self.delay_holder = ActionHolder(
             plugin_base=self,
             action_base=Delay,
-            action_id="com_core447_OSPlugin::Delay",
-            action_name=self.lm.get("actions.delay.name")
+            action_id_suffix="Delay",
+            action_name=self.lm.get("actions.delay.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.SUPPORTED
+            }
         )
         self.add_action_holder(self.delay_holder)
 
         self.launch_holder = ActionHolder(
             plugin_base=self,
             action_base=Launch,
-            action_id="com_core447_OSPlugin::Launch",
-            action_name=self.lm.get("actions.launch.name")
+            action_id_suffix="Launch",
+            action_name=self.lm.get("actions.launch.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         # Deactived because of problems in flatpak and app gathering
         # self.add_action_holder(self.launch_holder)
@@ -92,56 +119,91 @@ class OSPlugin(PluginBase):
         self.cpu_graph_holder = ActionHolder(
             plugin_base=self,
             action_base=CPU_Graph,
-            action_id="com_core447_OSPlugin::CPU_Graph",
-            action_name=self.lm.get("actions.cpu-graph.name")
+            action_id_suffix="CPU_Graph",
+            action_name=self.lm.get("actions.cpu-graph.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
         )
         self.add_action_holder(self.cpu_graph_holder) #FIXME: too unstable
 
         self.ram_graph_holder = ActionHolder(
             plugin_base=self,
             action_base=RAM_Graph,
-            action_id="com_core447_OSPlugin::RAM_Graph",
-            action_name=self.lm.get("actions.ram-graph.name")
+            action_id_suffix="RAM_Graph",
+            action_name=self.lm.get("actions.ram-graph.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
         )
         self.add_action_holder(self.ram_graph_holder) #FIXME: too unstable
 
         self.move_xy_holder = ActionHolder(
             plugin_base=self,
             action_base=MoveXY,
-            action_id="com_core447_OSPlugin::MoveXY",
-            action_name=self.lm.get("actions.move-xy.name")
+            action_id_suffix="MoveXY",
+            action_name=self.lm.get("actions.move-xy.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         self.add_action_holder(self.move_xy_holder)
 
         self.click_holder = ActionHolder(
             plugin_base=self,
             action_base=Click,
-            action_id="com_core447_OSPlugin::Click",
-            action_name=self.lm.get("actions.click.name")
+            action_id_suffix="Click",
+            action_name=self.lm.get("actions.click.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         self.add_action_holder(self.click_holder)
 
         self.cpu_holder = ActionHolder(
             plugin_base=self,
             action_base=CPU,
-            action_id="com_core447_OSPlugin::CPU",
-            action_name=self.lm.get("actions.cpu.name")
+            action_id_suffix="CPU",
+            action_name=self.lm.get("actions.cpu.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
         )
         self.add_action_holder(self.cpu_holder)
 
         self.ram_holder = ActionHolder(
             plugin_base=self,
             action_base=RAM,
-            action_id="com_core447_OSPlugin::RAM",
-            action_name=self.lm.get("actions.ram.name")
+            action_id_suffix="RAM",
+            action_name=self.lm.get("actions.ram.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
         )
         self.add_action_holder(self.ram_holder)
 
         self.write_text_holder = ActionHolder(
             plugin_base=self,
             action_base=WriteText,
-            action_id="com_core447_OSPlugin::WriteText",
-            action_name=self.lm.get("actions.write-text.name")
+            action_id_suffix="WriteText",
+            action_name=self.lm.get("actions.write-text.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
         )
         self.add_action_holder(self.write_text_holder)
 
