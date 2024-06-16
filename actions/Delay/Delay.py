@@ -1,3 +1,4 @@
+from backend.DeckManagement.InputIdentifier import InputEvent
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 from src.backend.PluginManager.ActionBase import ActionBase
@@ -39,6 +40,6 @@ class Delay(ActionBase):
         settings["delay"] = round(self.delay_row.get_value(), 1)
         self.set_settings(settings)
 
-    def on_key_down(self):
+    def event_callback(self, event: InputEvent, data: dict = None):
         delay = self.get_settings().get("delay", 0)
         time.sleep(delay)
