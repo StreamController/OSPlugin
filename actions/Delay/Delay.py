@@ -1,4 +1,4 @@
-from backend.DeckManagement.InputIdentifier import InputEvent
+from src.backend.DeckManagement.InputIdentifier import InputEvent
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 from src.backend.PluginManager.ActionBase import ActionBase
