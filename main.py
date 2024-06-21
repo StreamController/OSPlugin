@@ -202,7 +202,7 @@ class OSPlugin(PluginBase):
             action_support={
                 Input.Key: ActionInputSupport.SUPPORTED,
                 Input.Dial: ActionInputSupport.SUPPORTED,
-                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+                Input.Touchscreen: ActionInputSupport.UNTESTED
             }
         )
         self.add_action_holder(self.write_text_holder)
