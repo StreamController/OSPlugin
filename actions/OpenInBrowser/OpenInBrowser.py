@@ -17,7 +17,7 @@ class OpenInBrowser(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.HAS_CONFIGURATION = True
+        self.has_configuration = True
         
     def on_ready(self):
         self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "web.png"))
