@@ -10,6 +10,7 @@ from PIL import Image
 class CPU_Graph(GraphBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.has_configuration = False
 
     def on_tick(self):
         self.percentages.append(psutil.cpu_percent())

@@ -18,6 +18,7 @@ import subprocess
 
 class Launch(ActionBase):
     def __init__(self, *args, **kwargs):
+        self.has_configuration = False
         super().__init__(*args, **kwargs)
 
     def get_installed_apps(self):

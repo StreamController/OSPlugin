@@ -19,6 +19,7 @@ from evdev import ecodes
 class Click(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.has_configuration = False
         
     def on_ready(self) -> None:
         icon_path = os.path.join(self.plugin_base.PATH, "assets", "click.png")

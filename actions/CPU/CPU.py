@@ -16,6 +16,7 @@ from gi.repository import Gtk, Adw
 class CPU(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.has_configuration = False
     
     def on_ready(self):
         self.update()
