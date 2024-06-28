@@ -1,5 +1,9 @@
-{
+    {
     "run.entry.title": "Befehl:",
+    "run.display-output.title": "Output anzeigen",
+    "run.display-output.subtitle": "Wartet auf Ende der Ausführung",
+    "run.detached.title": "Entkoppelt",
+    "run.detached.subtitle": "Startet den Befehl in einem neuen Prozess",
     "open-browser.url.title": "URL:",
     "open-browser.new-window": "In neuem Fenster öffnen:",
     "delay.entry.title": "Verzögerung (s):",

@@ -1,5 +1,9 @@
 {
     "run.entry.title": "Command:",
+    "run.display-output.title": "Display Output",
+    "run.display-output.subtitle": "This will wait until the command is finished",
+    "run.detached.title": "Detached",
+    "run.detached.subtitle": "Executes the command in a separate process",
     "open-browser.url.title": "URL:",
     "open-browser.new-window": "Open in new window",
     "delay.entry.title": "Delay (s):",
@@ -26,7 +30,5 @@
     "actions.hotkey.repeat.title": "Repeat while holding",
     "actions.hotkey.repeat.subtitle": "Repeat the set hotkey while holding the button",
     "actions.hotkey.hold_until_release.title": "Hold until release",
-    "actions.hotkey.hold_until_release.subtitle": "Hold the set hotkey until the button is released",
-    "run.display-output.title": "Display Output",
-    "run.display-output.subtitle": "This will wait until the command is finished"
+    "actions.hotkey.hold_until_release.subtitle": "Hold the set hotkey until the button is released"
 }
