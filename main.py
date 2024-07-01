@@ -221,6 +221,7 @@ class OSPlugin(PluginBase):
     def init_vars(self):
         self.lm = self.locale_manager
         self.lm.set_to_os_default()
+        self.lm.set_fallback_language("en_US")
 
         self.ui = None
         try:
