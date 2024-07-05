@@ -46,7 +46,7 @@ class WriteText(ActionBase):
         self.main_box.append(self.text_view)
         self.buffer = self.text_view.get_buffer()
 
-        self.load_defaults()
+        self.load_defaults_for_custom_area()
 
         self.buffer.connect("changed", self.on_change)
 
@@ -56,9 +56,29 @@ class WriteText(ActionBase):
         
         return self.main_box
     
-    def load_defaults(self):
+    def get_config_rows(self) -> list:
+        self.delay_row = Adw.SpinRow.new_with_range(min=0, max=1, step=0.01)
+        self.delay_row.set_title(self.plugin_base.lm.get("actions.hotkey.delay.title"))
+        self.delay_row.set_subtitle(self.plugin_base.lm.get("actions.hotkey.delay.subtitle"))
+
+        self.load_defaults_for_rows()
+
+        self.delay_row.connect("changed", self.on_delay_changed)
+
+        return self.delay_row,
+
+    def on_delay_changed(self, spin_row):
+        settings = self.get_settings()
+        settings["delay"] = spin_row.get_value()
+        self.set_settings(settings)
+    
+    def load_defaults_for_custom_area(self):
         settings = self.get_settings()
         self.buffer.set_text(settings.get("text", ""))
+
+    def load_defaults_for_rows(self):
+        settings = self.get_settings()
+        self.delay_row.set_value(settings.get("delay", 0.01))
     
     def on_change(self, buffer):
         settings = self.get_settings()
@@ -75,4 +95,6 @@ class WriteText(ActionBase):
             self.show_error(1)
             return
         
-        keyboard_write(self.plugin_base.ui, text)
+        delay = settings.get("delay", 0.01)
+        
+        keyboard_write(self.plugin_base.ui, text, delay=delay)
