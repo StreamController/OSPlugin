@@ -35,6 +35,7 @@ from .RAM_Graph import RAM_Graph
 from .MoveXY import MoveXY
 from .Click import Click
 from .actions.CPU.CPU import CPU
+from .actions.CPU.CPUTemp import CPUTemp
 from .actions.RAM.RAM import RAM
 from .actions.WriteText.WriteText import WriteText
 
@@ -206,6 +207,19 @@ class OSPlugin(PluginBase):
             }
         )
         self.add_action_holder(self.write_text_holder)
+
+        self.cpu_temp_holder = ActionHolder(
+            plugin_base=self,
+            action_base=CPUTemp,
+            action_id_suffix="CPUTemp",
+            action_name="CPU Temperature",
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
+        )
+        self.add_action_holder(self.cpu_temp_holder)
 
         # Register plugin
         self.register(
