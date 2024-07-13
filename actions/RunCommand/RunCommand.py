@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import subprocess
 
@@ -67,7 +68,7 @@ class RunCommand(ActionBase):
             self.detached_switch.set_active(False)
         else:
             # remove possibly present label
-            self.set_center_label(None)
+            self.set_center_label("")
         self.set_settings(settings)
 
     def on_detached_changed(self, switch, _):
@@ -82,11 +83,12 @@ class RunCommand(ActionBase):
         if command is None:
             return
 
-        if self.is_in_flatpak():
+        if is_in_flatpak():
             command = "flatpak-spawn --host " + command
 
         if self.get_settings().get("detached", False):
-            subprocess.Popen(command, shell=True, start_new_session=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=os.path.expanduser("~"))  # If cwd is not set in the flatpak /app/bin/StreamController cannot be found
+            p = multiprocessing.Process(target=subprocess.Popen, args=[command], kwargs={"shell": True, "start_new_session": True, "stdin": subprocess.DEVNULL, "stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL, "cwd": os.path.expanduser("~")})
+            p.start()
             return ""
 
         result = subprocess.Popen(command, shell=True, start_new_session=True, text=True, stdout=subprocess.PIPE, cwd=os.path.expanduser("~"))  # If cwd is not set in the flatpak /app/bin/StreamController cannot be found
@@ -94,5 +96,6 @@ class RunCommand(ActionBase):
         result.wait()
         return result.communicate()[0].rstrip()
 
-    def is_in_flatpak(self) -> bool:
-        return os.path.isfile('/.flatpak-info')
+
+def is_in_flatpak() -> bool:
+    return os.path.isfile('/.flatpak-info')
