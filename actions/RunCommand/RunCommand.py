@@ -1,6 +1,7 @@
 import multiprocessing
 import os
 import subprocess
+import threading
 
 # Import gtk modules
 import gi
@@ -8,7 +9,7 @@ from src.backend.PluginManager.ActionBase import ActionBase
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw
+from gi.repository import Adw, Gtk
 
 
 class RunCommand(ActionBase):
@@ -17,15 +18,39 @@ class RunCommand(ActionBase):
 
         self.has_configuration = True
 
+        self.auto_run_timer: threading.Timer = None
+
     def on_ready(self):
         self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "terminal.png"))
+        self.start_timer()
+
+    def stop_timer(self):
+        if self.auto_run_timer is not None:
+            self.auto_run_timer.cancel()
+
+    def start_timer(self):
+        self.stop_timer()
+        settings = self.get_settings()
+        if settings.get("auto_run", 0) <= 0:
+            return
+        self.auto_run_timer = threading.Timer(settings.get("auto_run", 0), self.execute, args=(True,))
+        self.auto_run_timer.setDaemon(True)
+        self.auto_run_timer.setName("AutoRunTimer")
+        self.auto_run_timer.start()
 
     def on_key_down(self):
+        self.execute()
+
+    def execute(self, restart_timer: bool = False):
+        self.stop_timer()
         settings = self.get_settings()
 
         result = self.run_command(settings.get("command", None))
         if settings.get("display_output", False):
             self.set_center_label(result)
+
+        if restart_timer:
+            self.start_timer()
 
     def get_config_rows(self):
         entry_row = Adw.EntryRow(title=self.plugin_base.lm.get("run.entry.title"))
@@ -35,6 +60,10 @@ class RunCommand(ActionBase):
         self.detached_switch = Adw.SwitchRow(title=self.plugin_base.lm.get("run.detached.title"),
                                              subtitle=self.plugin_base.lm.get(
                                                  "run.detached.subtitle"))
+        
+        self.auto_run_row = Adw.SpinRow.new_with_range(0, 60, 0.1)
+        self.auto_run_row.set_title("Auto run every (s)")
+        self.auto_run_row.set_subtitle("Auto run command automatically (0 to disable)")
 
         # Load from config
         settings = self.get_settings()
@@ -47,13 +76,21 @@ class RunCommand(ActionBase):
 
         self.display_output_switch.set_active(settings.get("display_output", False))
         self.detached_switch.set_active(settings.get("detached", False))
+        self.auto_run_row.set_value(settings.get("auto_run", 0))
 
         # Connect entry
         entry_row.connect("notify::text", self.on_change_command)
         self.display_output_switch.connect("notify::active", self.on_display_output_changed)
         self.detached_switch.connect("notify::active", self.on_detached_changed)
+        self.auto_run_row.connect("changed", self.on_auto_run_changed)
 
-        return [entry_row, self.display_output_switch, self.detached_switch]
+        return [entry_row, self.display_output_switch, self.detached_switch, self.auto_run_row]
+    
+    def on_auto_run_changed(self, spin):
+        settings = self.get_settings()
+        settings["auto_run"] = round(spin.get_value(), 1)
+        self.set_settings(settings)
+        self.start_timer()
 
     def on_change_command(self, entry, _):
         settings = self.get_settings()
