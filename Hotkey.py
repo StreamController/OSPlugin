@@ -242,6 +242,24 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
             # self, Gdk.SeatCapabilities.KEYBOARD, False, None, None, None
         # )
 
+        self.special_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True, vexpand=False,
+                                   margin_start=10, margin_end=10, margin_top=10, margin_bottom=10)
+        self.main_box.append(self.special_box)
+
+        self.special_box.append(Gtk.Label(label="Special Keys:", margin_end=8))
+
+        self.special_box_flow = Gtk.FlowBox(orientation=Gtk.Orientation.HORIZONTAL, selection_mode=Gtk.SelectionMode.NONE, hexpand=True)
+        self.special_box.append(self.special_box_flow)
+
+        special_keys = []
+        for i in range(183, 195):
+            special_keys.append(i)
+
+        special_keys.append(ecodes.KEY_LEFTMETA)
+
+        for i in special_keys:
+            self.special_box_flow.append(SpecialKeyButton(self, self.all_keys[i], i))
+
         self.connect("destroy", self.on_destroy)
 
     def on_confirm(self, button):
@@ -284,6 +302,37 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         # Clear ui
         while self.flow_box.get_first_child() is not None:
             self.flow_box.remove(self.flow_box.get_first_child())
+
+
+class SpecialKeyButton(Gtk.Box):
+    def __init__(self, recorder: HotkeyRecorder, key_name:str, key_code:int):
+        """
+        Why not use a Gtk.Button? Because the button doesn't support separate press and release event handling
+        """
+        super().__init__(css_classes=["com_core447_OSPlugin-SpecialKeyButton"])
+
+        self.label = Gtk.Label(label=key_name, css_classes=["bold"])
+        self.append(self.label)
+
+        self.recorder = recorder
+        self.key_name = key_name
+        self.key_code = key_code
+
+        self.gesture_ctrl = Gtk.GestureClick()
+
+        self.gesture_ctrl.connect("pressed", self.on_press)
+        self.gesture_ctrl.connect("released", self.on_release)
+
+        self.add_controller(self.gesture_ctrl)
+
+    def on_press(self, button, *args):
+        print(f"Pressed: {self.key_name}")
+        self.recorder.add_key(self.key_code + self.recorder.GTK_CODE_DIFFERENCE, 1)
+        # self.recorder.add_key(self.key_code + self.recorder.GTK_CODE_DIFFERENCE, 0)
+
+    def on_release(self, button, *args):
+        print(f"Released: {self.key_name}")
+        self.recorder.add_key(self.key_code + self.recorder.GTK_CODE_DIFFERENCE, 0)
 
 
 class PressIndicator(Gtk.FlowBoxChild):

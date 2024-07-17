@@ -5,3 +5,17 @@
   font-size: 25px;
   font-weight: bold;
 }
+
+.com_core447_OSPlugin-SpecialKeyButton {
+  background-color: #454545;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+.com_core447_OSPlugin-SpecialKeyButton:hover {
+  background-color: #535353;
+}
+
+.com_core447_OSPlugin-SpecialKeyButton:active {
+  background-color: #686868;
+}
