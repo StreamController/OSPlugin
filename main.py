@@ -75,7 +75,7 @@ class OSPlugin(PluginBase):
                 Input.Touchscreen: ActionInputSupport.UNTESTED
             }
         )
-        # self.add_action_holder(self.open_in_browser_holder) #FIXME: Not working in flatpak right now
+        self.add_action_holder(self.open_in_browser_holder)
 
         self.hotkey_holder = ActionHolder(
             plugin_base=self,
