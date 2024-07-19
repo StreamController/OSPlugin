@@ -59,6 +59,10 @@ class OpenInBrowser(ActionBase):
     def open_url(self, url):
         if url in [None, ""]:
             return
+        
+        if not url.startswith("http://") and not url.startswith("https://"):
+            url = "https://" + url
+
         new = 1 if self.get_settings().get("new_window", False) else 0
         #FIXME: Not working in flatpak
         webbrowser.open(url, new=new)
