@@ -44,7 +44,7 @@ class OpenInBrowser(ActionBase):
         # Connect switch
         new_window_toggle.connect("notify::active", self.on_change_new_window)
 
-        return [entry_row, new_window_toggle]
+        return [entry_row]
 
     def on_change_url(self, entry, *args):
         settings = self.get_settings()
@@ -64,5 +64,5 @@ class OpenInBrowser(ActionBase):
             url = "https://" + url
 
         new = 1 if self.get_settings().get("new_window", False) else 0
-        #FIXME: Not working in flatpak
+        #FIXME: New window not working in flatpak
         webbrowser.open(url, new=new)
