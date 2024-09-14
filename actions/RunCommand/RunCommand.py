@@ -6,6 +6,7 @@ import threading
 # Import gtk modules
 import gi
 from src.backend.PluginManager.ActionBase import ActionBase
+from src.backend.DeckManagement.InputIdentifier import Input, InputEvent, InputIdentifier
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
@@ -38,8 +39,12 @@ class RunCommand(ActionBase):
         self.auto_run_timer.setName("AutoRunTimer")
         self.auto_run_timer.start()
 
-    def on_key_down(self):
-        self.execute()
+    def event_callback(self, event, data):
+        if event == Input.Key.Events.HOLD_START:
+            if self.auto_run_timer is not None:
+                self.stop_timer()
+        elif event == Input.Key.Events.SHORT_UP:
+            self.execute()
 
     def execute(self, restart_timer: bool = False):
         self.stop_timer()
