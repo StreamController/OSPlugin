@@ -71,8 +71,8 @@ class RunCommand(ActionBase):
         self.auto_run_row.set_title("Auto run every (s)")
         self.auto_run_row.set_subtitle("Auto run command automatically (0 to disable)")
 
-        self.keep_auto_run_in_background = Adw.SwitchRow(title="Keep auto run in background",
-                                                         subtitle="Keep auto run running when other page is active")
+        self.keep_auto_run_in_background = Adw.SwitchRow(title="Keep auto running in background",
+                                                         subtitle="Keep auto running when other page is active")
 
         # Load from config
         settings = self.get_settings()
