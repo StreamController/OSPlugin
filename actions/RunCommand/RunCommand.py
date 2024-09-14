@@ -55,7 +55,8 @@ class RunCommand(ActionBase):
             self.set_center_label(result)
 
         if restart_timer:
-            self.start_timer()
+            if self.get_is_present() and not settings.get("keep_auto_run_in_background", False): #TODO: Find a better solution
+                self.start_timer()
 
     def get_config_rows(self):
         entry_row = Adw.EntryRow(title=self.plugin_base.lm.get("run.entry.title"))
@@ -70,6 +71,9 @@ class RunCommand(ActionBase):
         self.auto_run_row.set_title("Auto run every (s)")
         self.auto_run_row.set_subtitle("Auto run command automatically (0 to disable)")
 
+        self.keep_auto_run_in_background = Adw.SwitchRow(title="Keep auto run in background",
+                                                         subtitle="Keep auto run running when other page is active")
+
         # Load from config
         settings = self.get_settings()
         command = settings.setdefault("command", None)
@@ -83,13 +87,16 @@ class RunCommand(ActionBase):
         self.detached_switch.set_active(settings.get("detached", True))
         self.auto_run_row.set_value(settings.get("auto_run", 0))
 
+        self.keep_auto_run_in_background.set_active(settings.get("keep_auto_run_in_background", False))
+
         # Connect entry
         entry_row.connect("notify::text", self.on_change_command)
         self.display_output_switch.connect("notify::active", self.on_display_output_changed)
         self.detached_switch.connect("notify::active", self.on_detached_changed)
         self.auto_run_row.connect("changed", self.on_auto_run_changed)
+        self.keep_auto_run_in_background.connect("notify::active", self.on_keep_auto_run_in_background_changed)
 
-        return [entry_row, self.display_output_switch, self.detached_switch, self.auto_run_row]
+        return [entry_row, self.display_output_switch, self.detached_switch, self.auto_run_row, self.keep_auto_run_in_background]
     
     def on_auto_run_changed(self, spin):
         settings = self.get_settings()
@@ -119,6 +126,11 @@ class RunCommand(ActionBase):
         if switch.get_active():
             # can't run detached AND display output
             self.display_output_switch.set_active(False)
+        self.set_settings(settings)
+
+    def on_keep_auto_run_in_background_changed(self, switch, _):
+        settings = self.get_settings()
+        settings["keep_auto_run_in_background"] = switch.get_active()
         self.set_settings(settings)
 
     def run_command(self, command):
