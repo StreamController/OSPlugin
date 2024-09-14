@@ -80,7 +80,7 @@ class RunCommand(ActionBase):
         entry_row.set_text(command)
 
         self.display_output_switch.set_active(settings.get("display_output", False))
-        self.detached_switch.set_active(settings.get("detached", False))
+        self.detached_switch.set_active(settings.get("detached", True))
         self.auto_run_row.set_value(settings.get("auto_run", 0))
 
         # Connect entry
@@ -128,7 +128,7 @@ class RunCommand(ActionBase):
         if is_in_flatpak():
             command = "flatpak-spawn --host " + command
 
-        if self.get_settings().get("detached", False):
+        if self.get_settings().get("detached", True):
             p = multiprocessing.Process(target=subprocess.Popen, args=[command], kwargs={"shell": True, "start_new_session": True, "stdin": subprocess.DEVNULL, "stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL, "cwd": os.path.expanduser("~")})
             p.start()
             return ""
