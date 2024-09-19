@@ -21,6 +21,8 @@ class RunCommand(ActionBase):
 
         self.auto_run_timer: threading.Timer = None
 
+        self.registered_down: bool = False # Temporary workaround for an issue in the app causing the action to get the short_up event if it's on the same key, but different page as a "change page" action that triggers the change #TODO
+
     def on_ready(self):
         self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "terminal.png"))
         self.start_timer()
@@ -40,11 +42,25 @@ class RunCommand(ActionBase):
         self.auto_run_timer.start()
 
     def event_callback(self, event, data):
-        if event == Input.Key.Events.HOLD_START:
-            if self.auto_run_timer is not None:
-                self.stop_timer()
-        elif event == Input.Key.Events.SHORT_UP:
-            self.execute()
+        # Workaround for issue described in line 24
+        if event == Input.Key.Events.DOWN:
+            if self.registered_down:
+                return
+            else:
+                self.registered_down = True
+        elif event == Input.Key.Events.UP:
+            self.registered_down = False
+        # End workaround
+
+        if self.get_settings().get("auto_run", 0) <= 0:
+            if event == Input.Key.Events.DOWN:
+                self.execute()
+        else:
+            if event == Input.Key.Events.HOLD_START:
+                if self.auto_run_timer is not None:
+                    self.stop_timer()
+            elif event == Input.Key.Events.SHORT_UP:
+                self.execute()
 
     def execute(self, restart_timer: bool = False):
         self.stop_timer()
