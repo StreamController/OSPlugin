@@ -29,6 +29,7 @@ from .Hotkey import Hotkey
 from .EasyHotkey import EasyHotkey
 from .Launch import Launch
 from .actions.RunCommand.RunCommand import RunCommand
+from .actions.EasyCommand.EasyCommand import EasyCommand
 from .actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
 from .actions.Delay.Delay import Delay
 from .CPU_Graph import CPU_Graph
@@ -64,6 +65,19 @@ class OSPlugin(PluginBase):
             }
         )
         self.add_action_holder(self.run_command_holder)
+
+        self.easy_command_holder = ActionHolder(
+            plugin_base=self,
+            action_base=EasyCommand,
+            action_id_suffix="EasyCommand",
+            action_name="Easy Run Command",
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.UNTESTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
+        )
+        self.add_action_holder(self.easy_command_holder)
 
         self.open_in_browser_holder = ActionHolder(
             plugin_base=self,
