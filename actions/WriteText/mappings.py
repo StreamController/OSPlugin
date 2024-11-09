@@ -146,6 +146,30 @@ _KEY_MAPPING = {
     '>': e.KEY_DOT,
     '?': e.KEY_SLASH,
     '~': e.KEY_GRAVE,
+    'f1': e.KEY_F1,
+    'f2': e.KEY_F2,
+    'f3': e.KEY_F3,
+    'f4': e.KEY_F4,
+    'f5': e.KEY_F5,
+    'f6': e.KEY_F6,
+    'f7': e.KEY_F7,
+    'f8': e.KEY_F8,
+    'f9': e.KEY_F9,
+    'f10': e.KEY_F10,
+    'f11': e.KEY_F11,
+    'f12': e.KEY_F12,
+    'f13': e.KEY_F13,
+    'f14': e.KEY_F14,
+    'f15': e.KEY_F15,
+    'f16': e.KEY_F16,
+    'f17': e.KEY_F17,
+    'f18': e.KEY_F18,
+    'f19': e.KEY_F19,
+    'f20': e.KEY_F20,
+    'f21': e.KEY_F21,
+    'f22': e.KEY_F22,
+    'f23': e.KEY_F23,
+    'f24': e.KEY_F24,
 }
 _SHIFT_KEY_MAPPING = {
     '!': e.KEY_1,
@@ -199,3 +223,17 @@ _SHIFT_KEY_MAPPING = {
 # we remove KEY_ from the key names to make it easier to type
 _SUPPORTED_KEYS = [key.replace("KEY_", "").lower() for key in dir(e) if key.startswith("KEY_") and key not in _BAD_ECODES]
 _SUPPORTED_KEY_CONSTANTS = [value for name, value in vars(e).items() if name.startswith('KEY_') and name not in _BAD_ECODES]
+
+_ALL_KEYS_DICT = {}
+for key in dir(e):
+    if key.startswith("KEY_") and key not in _BAD_ECODES:
+        _ALL_KEYS_DICT[key.replace("KEY_", "").lower()] = getattr(e, key)
+
+_MASTER_DICT = {}
+_MASTER_DICT.update(_SPECIAL_KEYS)
+_MASTER_DICT.update(_OLD_NUMPAD_KEYS)
+_MASTER_DICT.update(_OLD_PYNPUT_KEYS)
+_MASTER_DICT.update(_MODIFIER_KEYS)
+_MASTER_DICT.update(_KEY_MAPPING)
+_MASTER_DICT.update(_SHIFT_KEY_MAPPING)
+_MASTER_DICT.update(_ALL_KEYS_DICT)
