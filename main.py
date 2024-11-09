@@ -26,6 +26,7 @@ from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 
 from .Hotkey import Hotkey
+from .EasyHotkey import EasyHotkey
 from .Launch import Launch
 from .actions.RunCommand.RunCommand import RunCommand
 from .actions.OpenInBrowser.OpenInBrowser import OpenInBrowser
@@ -89,6 +90,19 @@ class OSPlugin(PluginBase):
             }
         )
         self.add_action_holder(self.hotkey_holder)
+
+        self.easy_hotkey_holder = ActionHolder(
+            plugin_base=self,
+            action_base=EasyHotkey,
+            action_id_suffix="EasyHotkey",
+            action_name="Easy Hotkey",
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.UNTESTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
+        )
+        self.add_action_holder(self.easy_hotkey_holder)
 
         self.delay_holder = ActionHolder(
             plugin_base=self,
