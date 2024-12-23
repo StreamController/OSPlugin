@@ -53,12 +53,23 @@ class CPUTemp(ActionBase):
         self.update()
 
     def update(self):
-        temperature = psutil.sensors_temperatures().get("coretemp", [])
-        if len(temperature) == 0:
+        temperature = psutil.sensors_temperatures()
+        # intel cpu
+        if "coretemp" in temperature:
+            temperature = temperature.get("coretemp")[0].current
+        # amd cpu
+        elif "k10temp" in temperature:
+            temperature = temperature.get("k10temp")
+            if len(temperature) > 1:
+                # zen chips and newer, Tccd1
+                temperature = temperature[1].current
+            else:
+                # amd chips before zen, or if only Tctl is returned
+                temperature = temperature[0].current
+        else:
             self.set_center_label(text="N/A", font_size=18)
             return
-        
-        temperature = temperature[0].current
+
         settings = self.get_settings()
         unit_key = settings.get("unit", "C")
-        self.set_center_label(text=f"{temperature} °{unit_key}", font_size=18)
+        self.set_center_label(text=f"{int(temperature)} °{unit_key}", font_size=18)
