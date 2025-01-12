@@ -8,7 +8,7 @@ Hotkeys and write text actions require you are in the input group and you have t
 
 1. Add the udev rule
     ```
-    KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess", GROUP="input", MODE="0660"
+    sudo sh -c 'echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-streamdeck-osplugin.rules'
     ```
 2. Create the input Group (if not already present):
     ```sh
