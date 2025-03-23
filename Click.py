@@ -1,6 +1,7 @@
 # Import StreamController modules
 import time
-from GtkHelper.ItemListComboRow import ItemListComboRow, ItemListComboRowListItem
+from GtkHelper.ComboRow import SimpleComboRowItem
+from GtkHelper.GenerativeUI.ComboRow import ComboRow
 from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
@@ -21,6 +22,15 @@ class Click(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.has_configuration = True
+
+        self.button_row = ComboRow(
+            action_core=self,
+            var_name="button",
+            default_value="left",
+            items=[SimpleComboRowItem("left", "Left"), SimpleComboRowItem("middle", "Middle"), SimpleComboRowItem("right", "Right")],
+            title="Button",
+            can_reset=False
+        )
         
     def on_ready(self) -> None:
         icon_path = os.path.join(self.plugin_base.PATH, "assets", "click.png")
@@ -31,12 +41,10 @@ class Click(ActionBase):
             self.show_error(1)
             return
         
-        settings = self.get_settings()
-
         button = ecodes.BTN_LEFT
-        if settings.get("button") == "middle":
+        if self.button_row.get_value() == "middle":
             button = ecodes.BTN_MIDDLE
-        elif settings.get("button") == "right":
+        elif self.button_row.get_value() == "right":
             button = ecodes.BTN_RIGHT
 
 
@@ -52,22 +60,3 @@ class Click(ActionBase):
         
         return Gtk.Label(label="Missing permission. Please add <a href=\"https://github.com/streamcontroller/osplugin?tab=readme-ov-file#hotkeys--write-text\">this</a> udev rule", use_markup=True,
                          css_classes=["bold", "warning"])
-    
-    def get_config_rows(self):
-        self.buttons = [ItemListComboRowListItem("left", "Left"), ItemListComboRowListItem("middle", "Middle"), ItemListComboRowListItem("right", "Right")]
-        self.button_row = ItemListComboRow(self.buttons, title="Button")
-
-        self.load_config_values()
-
-        self.button_row.connect("notify::selected", self.on_receive_type_changed)
-
-        return self.button_row,
-
-    def load_config_values(self):
-        settings = self.get_settings()
-        self.button_row.set_selected_item_by_key(settings.get("button", "left"))
-
-    def on_receive_type_changed(self, entry, *args):
-        settings = self.get_settings()
-        settings["button"] = entry.get_selected_item().key
-        self.set_settings(settings)
