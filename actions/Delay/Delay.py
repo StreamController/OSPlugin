@@ -23,7 +23,7 @@ class Delay(ActionBase):
         self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "hourglass_empty-inv.png"), size=0.8)
 
     def get_config_rows(self) -> list:
-        self.delay_row = Adw.SpinRow().new_with_range(min=0, max=10, step=0.1)
+        self.delay_row = Adw.SpinRow().new_with_range(min=0, max=60*60*24, step=0.1)
         self.delay_row.set_title(self.plugin_base.lm.get("delay.entry.title"))
         self.delay_row.set_subtitle(self.plugin_base.lm.get("delay.entry.subtitle"))
 
