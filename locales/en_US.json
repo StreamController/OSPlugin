@@ -30,5 +30,19 @@
     "actions.hotkey.repeat.title": "Repeat while holding",
     "actions.hotkey.repeat.subtitle": "Repeat the set hotkey while holding the button",
     "actions.hotkey.hold_until_release.title": "Hold until release",
-    "actions.hotkey.hold_until_release.subtitle": "Hold the set hotkey until the button is released"
+    "actions.hotkey.hold_until_release.subtitle": "Hold the set hotkey until the button is released",
+    "actions.joystick.name": "Joystick Control",
+    "actions.joystick.axis.title": "Axis",
+    "actions.joystick.axis.subtitle": "Select which joystick axis to control",
+    "actions.joystick.operation.title": "Operation",
+    "actions.joystick.operation.subtitle": "Set absolute value or add to current value",
+    "actions.joystick.value.title": "Value",
+    "actions.joystick.value.subtitle": "Value to set or add (range depends on the axis)",
+    "actions.joystick-buttons.name": "Joystick Buttons",
+    "actions.joystick-buttons.button.title": "Button",
+    "actions.joystick-buttons.button.subtitle": "Select which joystick button to control",
+    "actions.joystick-buttons.action-type.title": "Action Type",
+    "actions.joystick-buttons.action-type.subtitle": "How the button should be pressed",
+    "actions.joystick-buttons.duration.title": "Duration (seconds)",
+    "actions.joystick-buttons.duration.subtitle": "How long to hold the button down (for Press and Release)"
 }

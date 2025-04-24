@@ -19,7 +19,7 @@ import math
 import threading
 import subprocess
 import time
-from evdev import ecodes
+from evdev import ecodes, AbsInfo
 from evdev import UInput
 
 from src.backend.DeckManagement.DeckController import DeckController
@@ -40,6 +40,8 @@ from .actions.CPU.CPU import CPU
 from .actions.CPU.CPUTemp import CPUTemp
 from .actions.RAM.RAM import RAM
 from .actions.WriteText.WriteText import WriteText
+from .actions.Joystick.Joystick import Joystick
+from .actions.Joystick.JoystickButtons import JoystickButtons
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -249,6 +251,32 @@ class OSPlugin(PluginBase):
         )
         self.add_action_holder(self.cpu_temp_holder)
 
+        self.joystick_holder = ActionHolder(
+            plugin_base=self,
+            action_base=Joystick,
+            action_id_suffix="Joystick",
+            action_name=self.lm.get("actions.joystick.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
+        )
+        self.add_action_holder(self.joystick_holder)
+
+        self.joystick_buttons_holder = ActionHolder(
+            plugin_base=self,
+            action_base=JoystickButtons,
+            action_id_suffix="JoystickButtons",
+            action_name=self.lm.get("actions.joystick-buttons.name", "Joystick Buttons"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
+        )
+        self.add_action_holder(self.joystick_buttons_holder)
+
         # Register plugin
         self.register(
             plugin_name=self.lm.get("plugin.name"),
@@ -268,6 +296,16 @@ class OSPlugin(PluginBase):
         self.ui = None
         try:
             self.ui = UInput({ecodes.EV_KEY: range(0, 300),
-                         ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y]}, name="stream-controller-os-plugin")
+                         ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+                         ecodes.EV_ABS: [
+                (ecodes.ABS_X, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_Y, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_RX, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_RY, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_RZ, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_THROTTLE, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_HAT0X, AbsInfo(value=0, min=-1, max=1, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_HAT0Y, AbsInfo(value=0, min=-1, max=1, fuzz=0, flat=0, resolution=0)),
+            ]}, name="stream-controller-os-plugin")
         except Exception as e:
             log.error(e)
