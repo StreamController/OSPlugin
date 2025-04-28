@@ -34,6 +34,7 @@ class VirtualJoystick:
         }
         
         # Create the UInput device
+        print()
         self.ui = system_ui if system_ui else UInput(capabilities, name=name, phys="virtual-gamepad")
         self.system_ui = system_ui
         print(f"Created virtual joystick: {name}")
@@ -98,3 +99,11 @@ class VirtualJoystick:
         """Close the joystick device."""
         if hasattr(self, 'ui') and not self.system_ui:
             self.ui.close() 
+
+if __name__ == "__main__":
+    joystick = VirtualJoystick()
+    input()
+    while True:
+        joystick.circle_movement(10)
+        joystick.center_all()
+        time.sleep(1)

@@ -28,7 +28,6 @@ class JoystickButtons(ActionBase):
         super().__init__(*args, **kwargs)
         
         self.has_configuration = True
-        self.joystick = None
         self.button_items = [
             ButtonItem("A Button", e.BTN_A),
             ButtonItem("B Button", e.BTN_B),
@@ -104,17 +103,8 @@ class JoystickButtons(ActionBase):
         """Handle action type selection change"""
         self.update_ui_visibility()
     
-    def initialize_joystick(self):
-        if self.joystick is None:
-            try:
-                self.joystick = VirtualJoystick("streamcontroller-joystick", self.plugin_base.ui)
-            except Exception as ex:
-                self.show_error(f"Failed to create virtual joystick: {str(ex)}")
-                return False
-        return True
-    
     def on_key_down(self) -> None:
-        if not self.initialize_joystick():
+        if not self.plugin_base.gamepad:
             print("Failed to initialize joystick")
             return
         
@@ -132,17 +122,17 @@ class JoystickButtons(ActionBase):
             if action_type == "press_release":
                 duration = float(settings.get("duration", 0.1))
                 print(f"Press and release button {button_item.get_value()} for {duration}s")
-                self.joystick.press_button(button_code, duration)
+                self.plugin_base.gamepad.press_button(button_code, duration)
             
             elif action_type == "press":
                 print(f"Press button {button_item.get_value()}")
-                self.joystick.ui.write(e.EV_KEY, button_code, 1)  # Button down
-                self.joystick.ui.syn()
+                self.plugin_base.gamepad.ui.write(e.EV_KEY, button_code, 1)  # Button down
+                self.plugin_base.gamepad.ui.syn()
             
             elif action_type == "release":
                 print(f"Release button {button_item.get_value()}")
-                self.joystick.ui.write(e.EV_KEY, button_code, 0)  # Button up
-                self.joystick.ui.syn()
+                self.plugin_base.gamepad.ui.write(e.EV_KEY, button_code, 0)  # Button up
+                self.plugin_base.gamepad.ui.syn()
             
             elif action_type == "toggle":
                 # Get current state from settings
@@ -150,8 +140,8 @@ class JoystickButtons(ActionBase):
                 new_state = 1 if current_state == 0 else 0
                 
                 print(f"Toggle button {button_item.get_value()} to {new_state}")
-                self.joystick.ui.write(e.EV_KEY, button_code, new_state)
-                self.joystick.ui.syn()
+                self.plugin_base.gamepad.ui.write(e.EV_KEY, button_code, new_state)
+                self.plugin_base.gamepad.ui.syn()
                 
                 # Save the new state
                 self.save_button_state(button_code, new_state)

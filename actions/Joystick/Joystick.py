@@ -143,25 +143,16 @@ class Joystick(ActionBase):
     
     def on_center_clicked(self, button):
         """Center the selected axis"""
-        if not self.initialize_joystick():
+        if not self.plugin_base.gamepad:
             return
             
         axis_item = self.axis_row.get_selected_item()
         if axis_item:
-            self.joystick.move_axis(axis_item.axis_code, 0)
+            self.plugin_base.gamepad.move_axis(axis_item.axis_code, 0)
             self.save_axis_value(axis_item.axis_code, 0)
     
-    def initialize_joystick(self):
-        if self.joystick is None:
-            try:
-                self.joystick = VirtualJoystick("streamcontroller-joystick", self.plugin_base.ui)
-            except Exception as ex:
-                self.show_error(f"Failed to create virtual joystick: {str(ex)}")
-                return False
-        return True
-    
     def on_key_down(self) -> None:
-        if not self.initialize_joystick():
+        if not self.plugin_base.gamepad:
             print("failed to initialize joystick")
             return
         
@@ -187,7 +178,7 @@ class Joystick(ActionBase):
             
             # Perform the joystick action
             if operation == "set":
-                self.joystick.move_axis(axis_code, value)
+                self.plugin_base.gamepad.move_axis(axis_code, value)
                 # Save the new state (as percentage)
                 self.save_axis_value(axis_code, percentage_value)
             elif operation == "add":
@@ -204,7 +195,7 @@ class Joystick(ActionBase):
                     new_percentage = max(-100, min(100, new_percentage))
                     new_value = int((new_percentage / 100.0) * 32767)
                 
-                self.joystick.move_axis(axis_code, int(new_value))  # Convert to integer
+                self.plugin_base.gamepad.move_axis(axis_code, int(new_value))  # Convert to integer
                 self.save_axis_value(axis_code, new_percentage)
                 
         except Exception as ex:

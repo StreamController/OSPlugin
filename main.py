@@ -1,3 +1,4 @@
+from .actions.Joystick.joy import VirtualJoystick
 from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.PluginManager.PluginBase import PluginBase
 from src.backend.PluginManager.ActionHolder import ActionHolder
@@ -53,6 +54,8 @@ class OSPlugin(PluginBase):
         self.GITHUB_REPO = "https://github.com/your-github-repo"
         super().__init__()
         self.ui = None
+        self.gamepad_ui = None
+        self.gamepad = None
         self.init_vars()
 
         self.run_command_holder = ActionHolder(
@@ -297,15 +300,31 @@ class OSPlugin(PluginBase):
         try:
             self.ui = UInput({ecodes.EV_KEY: range(0, 300),
                          ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
-                         ecodes.EV_ABS: [
-                (ecodes.ABS_X, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
-                (ecodes.ABS_Y, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
-                (ecodes.ABS_RX, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
-                (ecodes.ABS_RY, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                        }, name="stream-controller-os-plugin")
+        except Exception as e:
+            log.error(e)
+
+        try:
+            capabilities = {
+            ecodes.EV_KEY: [ecodes.BTN_A, ecodes.BTN_B, ecodes.BTN_X, ecodes.BTN_Y, 
+                       ecodes.BTN_TL, ecodes.BTN_TR, ecodes.BTN_TL2, ecodes.BTN_TR2, 
+                       ecodes.BTN_SELECT, ecodes.BTN_START, ecodes.BTN_MODE,
+                       ecodes.BTN_THUMBL, ecodes.BTN_THUMBR],
+            ecodes.EV_ABS: [
+                # Alternative axes that don't affect mouse
                 (ecodes.ABS_RZ, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
                 (ecodes.ABS_THROTTLE, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                # Standard gamepad axes
+                (ecodes.ABS_RX, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_RY, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
                 (ecodes.ABS_HAT0X, AbsInfo(value=0, min=-1, max=1, fuzz=0, flat=0, resolution=0)),
                 (ecodes.ABS_HAT0Y, AbsInfo(value=0, min=-1, max=1, fuzz=0, flat=0, resolution=0)),
-            ]}, name="stream-controller-os-plugin")
+                # Include original X/Y axes for completeness but not recommended
+                (ecodes.ABS_X, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+                (ecodes.ABS_Y, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
+            ]
+        }
+            self.gamepad_ui = UInput(capabilities, name="virtual-gamepad-streamcontroller", phys="virtual-gamepad")
+            self.gamepad = VirtualJoystick("streamcontroller-joystick", self.gamepad_ui)
         except Exception as e:
             log.error(e)
