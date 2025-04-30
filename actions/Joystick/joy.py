@@ -32,12 +32,16 @@ class VirtualJoystick:
                 (e.ABS_Y, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
             ]
         }
+
+        self.axis_values: dict = {}
         
         # Create the UInput device
         print()
         self.ui = system_ui if system_ui else UInput(capabilities, name=name, phys="virtual-gamepad")
         self.system_ui = system_ui
         print(f"Created virtual joystick: {name}")
+
+        self.center_all()
     
     def move_axis(self, axis, value):
         """Move an axis to a specific value."""
@@ -98,7 +102,13 @@ class VirtualJoystick:
     def close(self):
         """Close the joystick device."""
         if hasattr(self, 'ui') and not self.system_ui:
-            self.ui.close() 
+            self.ui.close()
+
+    def get_last_axis_value(self, axis_code):
+        return self.axis_values.get(axis_code, 0)
+    
+    def save_axis_value(self, axis_code, value):
+        self.axis_values[axis_code] = value
 
 if __name__ == "__main__":
     joystick = VirtualJoystick()

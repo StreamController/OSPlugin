@@ -324,7 +324,7 @@ class OSPlugin(PluginBase):
                 (ecodes.ABS_Y, AbsInfo(value=0, min=-32767, max=32767, fuzz=0, flat=0, resolution=0)),
             ]
         }
-            self.gamepad_ui = UInput(capabilities, name="virtual-gamepad-streamcontroller", phys="virtual-gamepad")
+            self.gamepad_ui = UInput(capabilities, name="stream-controller-os-plugin-virtual-gamepad", phys="virtual-gamepad")
             self.gamepad = VirtualJoystick("streamcontroller-joystick", self.gamepad_ui)
         except Exception as e:
             log.error(e)

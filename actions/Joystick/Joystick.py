@@ -149,7 +149,7 @@ class Joystick(ActionBase):
         axis_item = self.axis_row.get_selected_item()
         if axis_item:
             self.plugin_base.gamepad.move_axis(axis_item.axis_code, 0)
-            self.save_axis_value(axis_item.axis_code, 0)
+            self.plugin_base.gamepad.save_axis_value(axis_item.axis_code, 0)
     
     def on_key_down(self) -> None:
         if not self.plugin_base.gamepad:
@@ -180,11 +180,11 @@ class Joystick(ActionBase):
             if operation == "set":
                 self.plugin_base.gamepad.move_axis(axis_code, value)
                 # Save the new state (as percentage)
-                self.save_axis_value(axis_code, percentage_value)
+                self.plugin_base.gamepad.save_axis_value(axis_code, percentage_value)
             elif operation == "add":
                 # For "add" operation, we need to implement a way to get current position
                 # Since we can't directly read from the virtual joystick, we'll need to track state
-                current_percentage = self.get_last_axis_value(axis_code)
+                current_percentage = self.plugin_base.gamepad.get_last_axis_value(axis_code)
                 new_percentage = current_percentage + percentage_value
                 
                 # Clamp values to appropriate range
@@ -196,22 +196,10 @@ class Joystick(ActionBase):
                     new_value = int((new_percentage / 100.0) * 32767)
                 
                 self.plugin_base.gamepad.move_axis(axis_code, int(new_value))  # Convert to integer
-                self.save_axis_value(axis_code, new_percentage)
+                self.plugin_base.gamepad.save_axis_value(axis_code, new_percentage)
                 
         except Exception as ex:
             self.show_error(f"Failed to move joystick: {str(ex)}")
-    
-    def get_last_axis_value(self, axis_code):
-        settings = self.get_settings()
-        axis_states = settings.get("axis_states", {})
-        return int(axis_states.get(str(axis_code), 0))  # Convert to integer
-    
-    def save_axis_value(self, axis_code, percentage_value):
-        settings = self.get_settings()
-        if "axis_states" not in settings:
-            settings["axis_states"] = {}
-        settings["axis_states"][str(axis_code)] = percentage_value
-        self.set_settings(settings)
     
     def show_error(self, message):
         self.plugin_base.logger.error(message) 
