@@ -71,7 +71,7 @@ class RunCommand(ActionBase):
             self.set_center_label(result)
 
         if restart_timer:
-            if self.get_is_present() and not settings.get("keep_auto_run_in_background", False): #TODO: Find a better solution
+            if self.get_is_present() or settings.get("keep_auto_run_in_background", False):
                 self.start_timer()
 
     def get_config_rows(self):
