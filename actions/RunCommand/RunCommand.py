@@ -26,6 +26,8 @@ class RunCommand(ActionBase):
     def on_ready(self):
         self.set_media(media_path=os.path.join(self.plugin_base.PATH, "assets", "terminal.png"))
         self.start_timer()
+        # Reset registered_down flag to prevent action from being blocked after page changes
+        self.registered_down = False
 
     def stop_timer(self):
         if self.auto_run_timer is not None:
