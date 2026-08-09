@@ -1,0 +1,25 @@
+name: Notify Store
+
+on:
+  push:
+    branches:
+      - main # Change to your default branch or use 'tags: ["*"]' if you only want this on new versions
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Store Update
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.STORE_AUTOMATION_TOKEN }}" \
+            https://api.github.com/repos/StreamController/StreamController-Store/dispatches \
+            -d '{
+              "event_type": "plugin_updated",
+              "client_payload": {
+                "repo_url": "https://github.com/${{ github.repository }}",
+                "version": "${{ github.ref_name }}",
+                "commit_sha": "${{ github.sha }}"
+              }
+            }'
