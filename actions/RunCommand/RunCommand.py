@@ -62,7 +62,7 @@ class RunCommand(ActionBase):
                 if self.auto_run_timer is not None:
                     self.stop_timer()
             elif event == Input.Key.Events.SHORT_UP:
-                self.execute()
+                self.execute(restart_timer=self.get_settings().get("auto_run", 0) > 0)
 
     def execute(self, restart_timer: bool = False):
         self.stop_timer()
@@ -73,7 +73,7 @@ class RunCommand(ActionBase):
             self.set_center_label(result)
 
         if restart_timer:
-            if self.get_is_present() and not settings.get("keep_auto_run_in_background", False): #TODO: Find a better solution
+            if self.get_is_present() or settings.get("keep_auto_run_in_background", False):
                 self.start_timer()
 
     def get_config_rows(self):
