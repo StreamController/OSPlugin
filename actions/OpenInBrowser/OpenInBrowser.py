@@ -6,6 +6,7 @@ from src.backend.PluginManager.PluginBase import PluginBase
 import os
 from PIL import Image
 import webbrowser
+from urllib.parse import urlparse
 
 # Import gtk modules
 import gi
@@ -60,7 +61,8 @@ class OpenInBrowser(ActionBase):
         if url in [None, ""]:
             return
         
-        if not url.startswith("http://") and not url.startswith("https://"):
+        # Allow any custom scheme, but default to https when no scheme is provided
+        if not urlparse(url).scheme:
             url = "https://" + url
 
         new = 1 if self.get_settings().get("new_window", False) else 0
