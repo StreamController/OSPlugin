@@ -220,11 +220,14 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.header_bar = Gtk.HeaderBar()
         self.set_titlebar(self.header_bar)
 
-        self.confirm_button = Gtk.Button(label=self.hotkey_row.hotkey.plugin_base.lm.get("actions.hotkey.recorder.confirm-text"), css_classes=["confirm-button"])
+        # focusable=False so these buttons can never end up holding keyboard
+        # focus - otherwise a key like Enter/Space would re-trigger the
+        # button's own "clicked" instead of being recorded as a hotkey.
+        self.confirm_button = Gtk.Button(label=self.hotkey_row.hotkey.plugin_base.lm.get("actions.hotkey.recorder.confirm-text"), css_classes=["confirm-button"], focusable=False)
         self.confirm_button.connect("clicked", self.on_confirm)
         self.header_bar.pack_end(self.confirm_button)
 
-        self.clear_button = Gtk.Button(label=self.hotkey_row.hotkey.plugin_base.lm.get("actions.hotkey.recorder.clear-text"), css_classes=["remove-button"])
+        self.clear_button = Gtk.Button(label=self.hotkey_row.hotkey.plugin_base.lm.get("actions.hotkey.recorder.clear-text"), css_classes=["remove-button"], focusable=False)
         self.header_bar.pack_start(self.clear_button)
         self.clear_button.connect("clicked", self.on_clear)
 
@@ -261,6 +264,12 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
             self.special_box_flow.append(SpecialKeyButton(self, self.all_keys[i], i))
 
         self.connect("destroy", self.on_destroy)
+
+        # Make sure the key recorder itself holds keyboard focus when the
+        # window opens, instead of a header bar button (which would
+        # otherwise intercept Enter/Space as a "clicked" instead of it
+        # being recorded as a hotkey).
+        self.connect("map", lambda *_: self.main_box.grab_focus())
 
     def on_confirm(self, button):
         self.close()
