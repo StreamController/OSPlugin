@@ -9,6 +9,7 @@ from evdev import ecodes as e
 
 from loguru import logger as log
 import time
+import pyclip
 
 def get_valid_key_names() -> list[str]:
     """Returns a list of valid key names."""
@@ -29,14 +30,33 @@ def check_caps_lock() -> bool:
 
 def keyboard_write(ui: UInput, text: str, delay: float = 0.01):
     caps_lock_is_on = check_caps_lock()
-    for char in text:
-        is_unicode = False
-        unicode_bytes = char.encode("unicode_escape")
-        # '\u' or '\U' for unicode, or '\x' for UTF-8
-        if unicode_bytes[0] == 92 and unicode_bytes[1] in [85, 117, 120]:
-            is_unicode = True
-
-        if char in _KEY_MAPPING:
+    
+    has_unicode = any(char not in _KEY_MAPPING for char in text)
+    
+    if has_unicode:
+        log.debug(f"Text contains Unicode characters, using clipboard method for entire text")
+        
+        try:
+            original_clipboard = pyclip.paste()
+        except Exception:
+            original_clipboard = ""
+        
+        pyclip.copy(text)
+        
+        ui.write(e.EV_KEY, e.KEY_LEFTCTRL, 1)
+        ui.write(e.EV_KEY, e.KEY_V, 1)
+        ui.write(e.EV_KEY, e.KEY_V, 0)
+        ui.write(e.EV_KEY, e.KEY_LEFTCTRL, 0)
+        
+        ui.syn()
+        time.sleep(delay)
+        
+        try:
+            pyclip.copy(original_clipboard)
+        except Exception:
+            pass
+    else:
+        for char in text:
             keycode = _KEY_MAPPING[char]
             need_shift = False
 
@@ -58,32 +78,6 @@ def keyboard_write(ui: UInput, text: str, delay: float = 0.01):
             # send keys
             ui.syn()
             time.sleep(delay)
-        elif is_unicode:
-            unicode_hex = hex(int(unicode_bytes[2:], 16))
-            unicode_hex_keys = unicode_hex[2:]
-
-            # hold shift + ctrl
-            ui.write(e.EV_KEY, e.KEY_LEFTSHIFT, 1)
-            ui.write(e.EV_KEY, e.KEY_LEFTCTRL, 1)
-
-            # press 'U' to initiate unicode sequence
-            ui.write(e.EV_KEY, e.KEY_U, 1)
-            ui.write(e.EV_KEY, e.KEY_U, 0)
-
-            # press unicode codepoint keys
-            for hex_char in unicode_hex_keys:
-                keycode = _KEY_MAPPING[hex_char]
-                ui.write(e.EV_KEY, keycode, 1)
-                ui.write(e.EV_KEY, keycode, 0)
-
-            # release shift + ctrl
-            ui.write(e.EV_KEY, e.KEY_LEFTSHIFT, 0)
-            ui.write(e.EV_KEY, e.KEY_LEFTCTRL, 0)
-
-            # send keys
-            ui.syn()
-        else:
-            log.warning(f"Unsupported character: {char}")
 
 def parse_key_combination(key_combination: str) -> list[int]:
     keys = key_combination.lower().split('+')
