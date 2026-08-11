@@ -1,4 +1,5 @@
 from threading import Thread
+from plugins.com_core447_OSPlugin.LabelPosition import OFF, create_position_row, set_positioned_label
 from src.backend.PluginManager.ActionBase import ActionBase
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
@@ -31,6 +32,14 @@ class GraphBase(ActionBase):
 
         self.percentages: list[float] = []
 
+        self.label_position_row = create_position_row(
+            self,
+            on_change=lambda *args: self.show_label(),
+            default_value=OFF,
+            include_off=True,
+            title="Value Label Position"
+        )
+
         self.task_queue = Queue()
         self.result_queue = Queue()
         # self.process = Process(target=self.worker, args=(self.task_queue, self.result_queue), name="GraphBaseCreator")
@@ -52,11 +61,17 @@ class GraphBase(ActionBase):
         
         return self.percentages
     
+    def get_y_max(self) -> float:
+        """The top of the y-axis, overwrite this for values that are not a percentage."""
+        return 100
+
     def get_graph(self) -> Image:
         ## Get vars
-        settings = self.get_settings()
+        settings = dict(self.get_settings())
         time_period = settings.get("time-period", 15)
         self.set_percentages_lenght(time_period)
+
+        settings["y-max"] = self.get_y_max()
 
         self.task_queue.put((settings, self.percentages))
 
@@ -68,6 +83,14 @@ class GraphBase(ActionBase):
         if image is None:
             return
         self.set_media(image=image)
+        self.show_label()
+
+    def get_label_text(self) -> str:
+        percent = round(self.percentages[-1]) if self.percentages else 0
+        return f"{percent}%"
+
+    def show_label(self):
+        set_positioned_label(self, self.label_position_row, self.get_label_text(), fallback=OFF)
 
     def get_custom_config_area(self):
         return Gtk.Label(label=self.plugin_base.lm.get("actions.graph-base.memory-warning"), css_classes=["destructive-action"])
@@ -243,9 +266,9 @@ class GraphCreator(Process):
         ax.margins(0)
         ax.axis('off')
 
-        # Set the y-axis to range from 0 to 100
+        # Set the y-axis to range from 0 to the maximum the action can report
         if not dynamic_scaling:
-            ax.set_ylim(0, 100)
+            ax.set_ylim(0, settings.get("y-max", 100))
 
         # Draw the canvas and retrieve the buffer
         canvas.draw()

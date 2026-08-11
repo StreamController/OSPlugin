@@ -1,3 +1,4 @@
+from plugins.com_core447_OSPlugin.LabelPosition import create_position_row, set_positioned_label
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
 from src.backend.PluginManager.ActionBase import ActionBase
@@ -17,13 +18,15 @@ class RAM(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.has_configuration = False
-    
+
+        self.position_row = create_position_row(self, on_change=lambda *args: self.update())
+
     def on_ready(self):
         self.update()
-        
+
     def on_tick(self):
         self.update()
 
     def update(self):
         percent = round(psutil.virtual_memory().percent)
-        self.set_center_label(text=f"{percent}%", font_size=24)
+        set_positioned_label(self, self.position_row, f"{percent}%", center_font_size=24)
