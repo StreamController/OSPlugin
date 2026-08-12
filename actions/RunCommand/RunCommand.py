@@ -61,6 +61,9 @@ class RunCommand(ActionBase):
             if event == Input.Key.Events.HOLD_START:
                 if self.auto_run_timer is not None:
                     self.stop_timer()
+            elif event == Input.Key.Events.HOLD_STOP:
+                # The timer got stopped on HOLD_START, resume it after the key has been released
+                self.start_timer()
             elif event == Input.Key.Events.SHORT_UP:
                 self.execute(restart_timer=self.get_settings().get("auto_run", 0) > 0)
 
