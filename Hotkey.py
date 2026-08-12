@@ -15,6 +15,8 @@ from evdev import ecodes
 from selectors import DefaultSelector, EVENT_READ
 from evdev import categorize, UInput
 
+from .actions.WriteText.layout import layout
+
 import threading
 from time import sleep
 import os
@@ -326,6 +328,14 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         return True
 
     def get_key_name(self, key_code: int) -> str:
+        # Key codes name the position of a key on a US keyboard, so show the
+        # character the active layout actually puts there instead
+        table = layout.get_table()
+        if table is not None:
+            label = table.get_label(key_code)
+            if label is not None:
+                return label
+
         key_name = self.all_keys[key_code]
         if isinstance(key_name, (list, tuple)):
             # Some key codes have multiple names
