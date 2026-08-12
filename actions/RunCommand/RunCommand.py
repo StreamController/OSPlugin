@@ -71,6 +71,9 @@ class RunCommand(ActionBase):
         self.stop_timer()
         settings = self.get_settings()
 
+        if settings.get("display_output", False) and settings.get("clear_output", False):
+            self.set_center_label("")
+
         result = self.run_command(settings.get("command", None))
         if settings.get("display_output", False):
             self.set_center_label(result)
@@ -84,6 +87,9 @@ class RunCommand(ActionBase):
         self.display_output_switch = Adw.SwitchRow(
             title=self.plugin_base.lm.get("run.display-output.title"),
             subtitle=self.plugin_base.lm.get("run.display-output.subtitle"))
+        self.clear_output_switch = Adw.SwitchRow(
+            title=self.plugin_base.lm.get("run.clear-output.title"),
+            subtitle=self.plugin_base.lm.get("run.clear-output.subtitle"))
         self.detached_switch = Adw.SwitchRow(title=self.plugin_base.lm.get("run.detached.title"),
                                              subtitle=self.plugin_base.lm.get(
                                                  "run.detached.subtitle"))
@@ -105,6 +111,8 @@ class RunCommand(ActionBase):
         entry_row.set_text(command)
 
         self.display_output_switch.set_active(settings.get("display_output", False))
+        self.clear_output_switch.set_active(settings.get("clear_output", False))
+        self.clear_output_switch.set_sensitive(settings.get("display_output", False))
         self.detached_switch.set_active(settings.get("detached", True))
         self.auto_run_row.set_value(settings.get("auto_run", 0))
 
@@ -113,11 +121,12 @@ class RunCommand(ActionBase):
         # Connect entry
         entry_row.connect("notify::text", self.on_change_command)
         self.display_output_switch.connect("notify::active", self.on_display_output_changed)
+        self.clear_output_switch.connect("notify::active", self.on_clear_output_changed)
         self.detached_switch.connect("notify::active", self.on_detached_changed)
         self.auto_run_row.connect("changed", self.on_auto_run_changed)
         self.keep_auto_run_in_background.connect("notify::active", self.on_keep_auto_run_in_background_changed)
 
-        return [entry_row, self.display_output_switch, self.detached_switch, self.auto_run_row, self.keep_auto_run_in_background]
+        return [entry_row, self.display_output_switch, self.clear_output_switch, self.detached_switch, self.auto_run_row, self.keep_auto_run_in_background]
     
     def on_auto_run_changed(self, spin):
         settings = self.get_settings()
@@ -139,6 +148,12 @@ class RunCommand(ActionBase):
         else:
             # remove possibly present label
             self.set_center_label("")
+        self.clear_output_switch.set_sensitive(switch.get_active())
+        self.set_settings(settings)
+
+    def on_clear_output_changed(self, switch, _):
+        settings = self.get_settings()
+        settings["clear_output"] = switch.get_active()
         self.set_settings(settings)
 
     def on_detached_changed(self, switch, _):

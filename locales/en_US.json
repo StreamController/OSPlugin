@@ -2,6 +2,8 @@
     "run.entry.title": "Command:",
     "run.display-output.title": "Display Output",
     "run.display-output.subtitle": "This will wait until the command is finished",
+    "run.clear-output.title": "Clear output while running",
+    "run.clear-output.subtitle": "Removes the old output while the command is running",
     "run.detached.title": "Detached",
     "run.detached.subtitle": "Executes the command in a separate process",
     "open-browser.url.title": "URL:",
