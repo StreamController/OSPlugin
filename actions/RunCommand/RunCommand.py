@@ -12,6 +12,8 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gtk
 
+LABEL_POSITIONS = ["top", "center", "bottom"]
+
 
 class RunCommand(ActionBase):
     def __init__(self, *args, **kwargs):
@@ -72,15 +74,24 @@ class RunCommand(ActionBase):
         settings = self.get_settings()
 
         if settings.get("display_output", False) and settings.get("clear_output", False):
-            self.set_center_label("")
+            self.set_output_label("")
 
         result = self.run_command(settings.get("command", None))
         if settings.get("display_output", False):
-            self.set_center_label(result)
+            self.set_output_label(result)
 
         if restart_timer:
             if self.get_is_present() or settings.get("keep_auto_run_in_background", False):
                 self.start_timer()
+
+    def set_output_label(self, text: str):
+        self.set_label(text, position=self.get_label_position())
+
+    def get_label_position(self) -> str:
+        position = self.get_settings().get("label_position", "center")
+        if position not in LABEL_POSITIONS:
+            position = "center"
+        return position
 
     def get_config_rows(self):
         entry_row = Adw.EntryRow(title=self.plugin_base.lm.get("run.entry.title"))
@@ -94,6 +105,11 @@ class RunCommand(ActionBase):
                                              subtitle=self.plugin_base.lm.get(
                                                  "run.detached.subtitle"))
         
+        self.label_position_row = Adw.ComboRow(
+            title=self.plugin_base.lm.get("run.label-position.title"),
+            subtitle=self.plugin_base.lm.get("run.label-position.subtitle"),
+            model=Gtk.StringList.new([self.plugin_base.lm.get(f"run.label-position.{position}") for position in LABEL_POSITIONS]))
+
         self.auto_run_row = Adw.SpinRow.new_with_range(0, 60, 0.1)
         self.auto_run_row.set_title("Auto run every (s)")
         self.auto_run_row.set_subtitle("Auto run command automatically (0 to disable)")
@@ -113,6 +129,8 @@ class RunCommand(ActionBase):
         self.display_output_switch.set_active(settings.get("display_output", False))
         self.clear_output_switch.set_active(settings.get("clear_output", False))
         self.clear_output_switch.set_sensitive(settings.get("display_output", False))
+        self.label_position_row.set_selected(LABEL_POSITIONS.index(self.get_label_position()))
+        self.label_position_row.set_sensitive(settings.get("display_output", False))
         self.detached_switch.set_active(settings.get("detached", True))
         self.auto_run_row.set_value(settings.get("auto_run", 0))
 
@@ -122,11 +140,12 @@ class RunCommand(ActionBase):
         entry_row.connect("notify::text", self.on_change_command)
         self.display_output_switch.connect("notify::active", self.on_display_output_changed)
         self.clear_output_switch.connect("notify::active", self.on_clear_output_changed)
+        self.label_position_row.connect("notify::selected", self.on_label_position_changed)
         self.detached_switch.connect("notify::active", self.on_detached_changed)
         self.auto_run_row.connect("changed", self.on_auto_run_changed)
         self.keep_auto_run_in_background.connect("notify::active", self.on_keep_auto_run_in_background_changed)
 
-        return [entry_row, self.display_output_switch, self.clear_output_switch, self.detached_switch, self.auto_run_row, self.keep_auto_run_in_background]
+        return [entry_row, self.display_output_switch, self.clear_output_switch, self.label_position_row, self.detached_switch, self.auto_run_row, self.keep_auto_run_in_background]
     
     def on_auto_run_changed(self, spin):
         settings = self.get_settings()
@@ -147,13 +166,27 @@ class RunCommand(ActionBase):
             self.detached_switch.set_active(False)
         else:
             # remove possibly present label
-            self.set_center_label("")
+            self.set_output_label("")
         self.clear_output_switch.set_sensitive(switch.get_active())
+        self.label_position_row.set_sensitive(switch.get_active())
         self.set_settings(settings)
 
     def on_clear_output_changed(self, switch, _):
         settings = self.get_settings()
         settings["clear_output"] = switch.get_active()
+        self.set_settings(settings)
+
+    def on_label_position_changed(self, combo, _):
+        position = LABEL_POSITIONS[combo.get_selected()]
+        old_position = self.get_label_position()
+        if position == old_position:
+            return
+
+        # remove the label at the old position
+        self.set_label("", position=old_position)
+
+        settings = self.get_settings()
+        settings["label_position"] = position
         self.set_settings(settings)
 
     def on_detached_changed(self, switch, _):
