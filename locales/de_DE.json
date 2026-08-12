@@ -31,5 +31,20 @@
     "actions.hotkey.recorder.unreleased-warning": "Diese Tasten werden nie losgelassen:",
     "actions.cpu.name": "CPU Nutzung",
     "actions.ram.name": "Arbeitsspeicher Nutzung",
-    "actions.write-text.name": "Text schreiben"
+    "actions.write-text.name": "Text schreiben",
+    "actions.ping.name": "Ping",
+    "actions.ping.host.title": "Host:",
+    "actions.ping.count.title": "Pakete",
+    "actions.ping.count.subtitle": "Die Anzahl der Pakete pro Ping",
+    "actions.ping.timeout.title": "Timeout (s)",
+    "actions.ping.timeout.subtitle": "Die Wartezeit auf eine Antwort",
+    "actions.ping.interval.title": "Ping alle (s)",
+    "actions.ping.interval.subtitle": "Automatisch pingen (0 um nur beim Drücken zu pingen)",
+    "actions.ping.value.title": "Angezeigter Wert",
+    "actions.ping.value.avg": "Durchschnitt",
+    "actions.ping.value.min": "Minimum",
+    "actions.ping.value.max": "Maximum",
+    "actions.ping.color.title": "Hintergrund einfärben",
+    "actions.ping.color.subtitle": "Grün wenn der Host erreichbar ist, sonst rot",
+    "actions.ping.unreachable": "Fehler"
 }

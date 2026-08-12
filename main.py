@@ -40,6 +40,7 @@ from .actions.CPU.CPU import CPU
 from .actions.CPU.CPUTemp import CPUTemp
 from .actions.RAM.RAM import RAM
 from .actions.WriteText.WriteText import WriteText
+from .actions.Ping.Ping import Ping
 
 # Add plugin to sys.paths
 sys.path.append(os.path.dirname(__file__))
@@ -248,6 +249,19 @@ class OSPlugin(PluginBase):
             }
         )
         self.add_action_holder(self.cpu_temp_holder)
+
+        self.ping_holder = ActionHolder(
+            plugin_base=self,
+            action_base=Ping,
+            action_id_suffix="Ping",
+            action_name=self.lm.get("actions.ping.name"),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED
+            }
+        )
+        self.add_action_holder(self.ping_holder)
 
         # Register plugin
         self.register(
