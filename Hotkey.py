@@ -222,6 +222,10 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.explain = Gtk.Label(label="Press keys to record...", margin_top=30)
         self.main_box.append(self.explain)
 
+        self.unreleased_warning = Gtk.Label(css_classes=["bold", "warning"], margin_top=6, margin_start=10,
+                                            margin_end=10, wrap=True, visible=False)
+        self.main_box.append(self.unreleased_warning)
+
         self.scrolled_window = Gtk.ScrolledWindow()
         self.main_box.append(self.scrolled_window)
 
@@ -335,9 +339,33 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.hotkey_row.hotkey.settings["keys"].append([key_code, state])
         self.hotkey_row.hotkey.set_settings(self.hotkey_row.hotkey.settings)
 
+        self.update_unreleased_warning()
+
+    def update_unreleased_warning(self):
+        """
+        Warn about keys that get pressed down but never released - they would stay pressed on the system
+        """
+        pressed: list[int] = []
+        for key_code, state in self.hotkey_row.hotkey.settings.get("keys", []):
+            if state == 1:
+                pressed.append(key_code)
+            elif key_code in pressed:
+                pressed.remove(key_code)
+
+        self.unreleased_warning.set_visible(len(pressed) > 0)
+        if len(pressed) == 0:
+            return
+
+        # dict.fromkeys to remove duplicates while keeping the order
+        key_names = ", ".join(dict.fromkeys(self.get_key_name(key_code) for key_code in pressed))
+        warning = self.hotkey_row.hotkey.plugin_base.lm.get("actions.hotkey.recorder.unreleased-warning")
+        self.unreleased_warning.set_label(f"{warning} {key_names}")
+
     def load_defaults(self):
         for key in self.hotkey_row.hotkey.settings.get("keys", []):
             self.flow_box.append(PressIndicator(self.get_key_name(key[0]), key[1] == 1, key[1] == 0))
+
+        self.update_unreleased_warning()
 
     def on_clear(self, button):
         self.hotkey_row.hotkey.settings["keys"] = []
@@ -346,6 +374,8 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         # Clear ui
         while self.flow_box.get_first_child() is not None:
             self.flow_box.remove(self.flow_box.get_first_child())
+
+        self.update_unreleased_warning()
 
 
 class SpecialKeyButton(Gtk.Box):
