@@ -11,6 +11,8 @@
     "run.label-position.bottom": "Unten",
     "run.detached.title": "Entkoppelt",
     "run.detached.subtitle": "Startet den Befehl in einem neuen Prozess",
+    "run.interactive-shell.title": "In interaktiver Shell ausführen",
+    "run.interactive-shell.subtitle": "Lädt deine Shell-Konfiguration, dadurch sind Aliase und Funktionen verfügbar",
     "open-browser.url.title": "URL:",
     "open-browser.new-window": "In neuem Fenster öffnen:",
     "delay.entry.title": "Verzögerung (s):",

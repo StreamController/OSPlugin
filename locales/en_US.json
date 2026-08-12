@@ -11,6 +11,8 @@
     "run.label-position.bottom": "Bottom",
     "run.detached.title": "Detached",
     "run.detached.subtitle": "Executes the command in a separate process",
+    "run.interactive-shell.title": "Run in interactive shell",
+    "run.interactive-shell.subtitle": "Loads your shell config, this makes aliases and functions available",
     "open-browser.url.title": "URL:",
     "open-browser.new-window": "Open in new window",
     "delay.entry.title": "Delay (s):",

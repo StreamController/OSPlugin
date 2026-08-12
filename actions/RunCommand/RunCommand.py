@@ -1,7 +1,12 @@
+import functools
 import multiprocessing
 import os
+import pwd
+import shlex
 import subprocess
 import threading
+
+from loguru import logger as log
 
 # Import gtk modules
 import gi
@@ -110,6 +115,10 @@ class RunCommand(ActionBase):
             subtitle=self.plugin_base.lm.get("run.label-position.subtitle"),
             model=Gtk.StringList.new([self.plugin_base.lm.get(f"run.label-position.{position}") for position in LABEL_POSITIONS]))
 
+        self.interactive_shell_switch = Adw.SwitchRow(
+            title=self.plugin_base.lm.get("run.interactive-shell.title"),
+            subtitle=self.plugin_base.lm.get("run.interactive-shell.subtitle"))
+
         self.auto_run_row = Adw.SpinRow.new_with_range(0, 60, 0.1)
         self.auto_run_row.set_title("Auto run every (s)")
         self.auto_run_row.set_subtitle("Auto run command automatically (0 to disable)")
@@ -132,6 +141,7 @@ class RunCommand(ActionBase):
         self.label_position_row.set_selected(LABEL_POSITIONS.index(self.get_label_position()))
         self.label_position_row.set_sensitive(settings.get("display_output", False))
         self.detached_switch.set_active(settings.get("detached", True))
+        self.interactive_shell_switch.set_active(settings.get("interactive_shell", False))
         self.auto_run_row.set_value(settings.get("auto_run", 0))
 
         self.keep_auto_run_in_background.set_active(settings.get("keep_auto_run_in_background", False))
@@ -142,10 +152,11 @@ class RunCommand(ActionBase):
         self.clear_output_switch.connect("notify::active", self.on_clear_output_changed)
         self.label_position_row.connect("notify::selected", self.on_label_position_changed)
         self.detached_switch.connect("notify::active", self.on_detached_changed)
+        self.interactive_shell_switch.connect("notify::active", self.on_interactive_shell_changed)
         self.auto_run_row.connect("changed", self.on_auto_run_changed)
         self.keep_auto_run_in_background.connect("notify::active", self.on_keep_auto_run_in_background_changed)
 
-        return [entry_row, self.display_output_switch, self.clear_output_switch, self.label_position_row, self.detached_switch, self.auto_run_row, self.keep_auto_run_in_background]
+        return [entry_row, self.display_output_switch, self.clear_output_switch, self.label_position_row, self.detached_switch, self.interactive_shell_switch, self.auto_run_row, self.keep_auto_run_in_background]
     
     def on_auto_run_changed(self, spin):
         settings = self.get_settings()
@@ -197,6 +208,11 @@ class RunCommand(ActionBase):
             self.display_output_switch.set_active(False)
         self.set_settings(settings)
 
+    def on_interactive_shell_changed(self, switch, _):
+        settings = self.get_settings()
+        settings["interactive_shell"] = switch.get_active()
+        self.set_settings(settings)
+
     def on_keep_auto_run_in_background_changed(self, switch, _):
         settings = self.get_settings()
         settings["keep_auto_run_in_background"] = switch.get_active()
@@ -205,6 +221,10 @@ class RunCommand(ActionBase):
     def run_command(self, command):
         if command is None:
             return
+
+        if self.get_settings().get("interactive_shell", False):
+            # Run in an interactive shell so that aliases and functions from the user's rc files are available
+            command = f"{shlex.quote(get_user_shell())} -ic {shlex.quote(command)}"
 
         if is_in_flatpak():
             command = "flatpak-spawn --host " + command
@@ -222,3 +242,31 @@ class RunCommand(ActionBase):
 
 def is_in_flatpak() -> bool:
     return os.path.isfile('/.flatpak-info')
+
+
+@functools.cache
+def get_user_shell() -> str:
+    """
+    The login shell of the user - in the flatpak this has to be asked from the host,
+    the sandbox always reports /bin/sh.
+    """
+    if is_in_flatpak():
+        try:
+            passwd_entry = subprocess.run(["flatpak-spawn", "--host", "getent", "passwd", str(os.getuid())],
+                                          capture_output=True, text=True, timeout=5).stdout.strip()
+            shell = passwd_entry.split(":")[-1]
+            if shell:
+                return shell
+        except Exception as e:
+            log.error(e)
+    else:
+        shell = os.environ.get("SHELL")
+        if shell:
+            return shell
+
+        try:
+            return pwd.getpwuid(os.getuid()).pw_shell
+        except Exception as e:
+            log.error(e)
+
+    return "/bin/bash"
