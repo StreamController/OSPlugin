@@ -20,6 +20,25 @@ from time import sleep
 import os
 from PIL import Image
 
+# Keys that most keyboards don't have and that therefore can't be recorded by pressing them
+MEDIA_KEYS: dict[int, str] = {
+    ecodes.KEY_PLAYPAUSE: "Play/Pause",
+    ecodes.KEY_PREVIOUSSONG: "Previous",
+    ecodes.KEY_NEXTSONG: "Next",
+    ecodes.KEY_STOPCD: "Stop",
+    ecodes.KEY_MUTE: "Mute",
+    ecodes.KEY_VOLUMEDOWN: "Volume -",
+    ecodes.KEY_VOLUMEUP: "Volume +",
+    ecodes.KEY_BRIGHTNESSDOWN: "Brightness -",
+    ecodes.KEY_BRIGHTNESSUP: "Brightness +",
+    ecodes.KEY_CALC: "Calculator",
+    ecodes.KEY_WWW: "Browser",
+    ecodes.KEY_MAIL: "Mail",
+    ecodes.KEY_HOMEPAGE: "Homepage",
+    ecodes.KEY_SEARCH: "Search",
+    ecodes.KEY_SLEEP: "Sleep"
+}
+
 class Hotkey(ActionBase):
     ACTION_NAME = "Hotkey"
     CONTROLS_KEY_IMAGE = False
@@ -194,7 +213,7 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         self.all_keys.update(evdev.ecodes.KEY)
         self.all_keys.update(evdev.ecodes.BTN)
 
-        self.set_default_size(600, 300)
+        self.set_default_size(600, 400)
         self.set_title("Hotkey Recorder")
 
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, focus_on_click=True, focusable=True, can_focus=True)
@@ -261,7 +280,19 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         special_keys.append(ecodes.KEY_LEFTMETA)
 
         for i in special_keys:
-            self.special_box_flow.append(SpecialKeyButton(self, self.all_keys[i], i))
+            self.special_box_flow.append(SpecialKeyButton(self, self.get_key_name(i), i))
+
+        self.media_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True, vexpand=False,
+                                 margin_start=10, margin_end=10, margin_bottom=10)
+        self.main_box.append(self.media_box)
+
+        self.media_box.append(Gtk.Label(label="Media Keys:", margin_end=8, valign=Gtk.Align.START, margin_top=8))
+
+        self.media_box_flow = Gtk.FlowBox(orientation=Gtk.Orientation.HORIZONTAL, selection_mode=Gtk.SelectionMode.NONE, hexpand=True)
+        self.media_box.append(self.media_box_flow)
+
+        for key_code, key_name in MEDIA_KEYS.items():
+            self.media_box_flow.append(SpecialKeyButton(self, key_name, key_code))
 
         self.connect("destroy", self.on_destroy)
 
@@ -290,19 +321,23 @@ class HotkeyRecorder(Gtk.ApplicationWindow):
         # Notify app that key press was handled
         return True
 
+    def get_key_name(self, key_code: int) -> str:
+        key_name = self.all_keys[key_code]
+        if isinstance(key_name, (list, tuple)):
+            # Some key codes have multiple names
+            key_name = key_name[-1]
+        return key_name
+
     def add_key(self, key_code, state):
         key_code -= self.GTK_CODE_DIFFERENCE
-        key_name = self.all_keys[key_code]
+        key_name = self.get_key_name(key_code)
         self.flow_box.append(PressIndicator(key_name, state == 1, state == 0))
         self.hotkey_row.hotkey.settings["keys"].append([key_code, state])
         self.hotkey_row.hotkey.set_settings(self.hotkey_row.hotkey.settings)
 
     def load_defaults(self):
         for key in self.hotkey_row.hotkey.settings.get("keys", []):
-            key_name = self.all_keys[key[0]]
-            if isinstance(key_name, list):
-                key_name = key_name[0]
-            self.flow_box.append(PressIndicator(key_name, key[1] == 1, key[1] == 0))
+            self.flow_box.append(PressIndicator(self.get_key_name(key[0]), key[1] == 1, key[1] == 0))
 
     def on_clear(self, button):
         self.hotkey_row.hotkey.settings["keys"] = []
