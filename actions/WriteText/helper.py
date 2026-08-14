@@ -9,6 +9,7 @@ from evdev import InputDevice, UInput, list_devices
 from evdev import ecodes as e
 
 from loguru import logger as log
+import threading
 import time
 
 def get_valid_key_names() -> list[str]:
@@ -20,13 +21,50 @@ def get_valid_key_names() -> list[str]:
     key_names.extend(_MODIFIER_KEYS.keys())
     return sorted(key_names)
 
+# Closing an input device costs the kernel tens of milliseconds, so opening
+# every one of them to look for the keyboard adds up to more than a second of
+# delay before the first character is typed. The keyboard we found is kept open
+# and reused instead.
+_caps_lock_device: InputDevice | None = None
+_caps_lock_lock = threading.Lock()
+
+
+def _find_caps_lock_device() -> InputDevice | None:
+    """The first input device that reports LED state, or None if there is none"""
+    for path in list_devices():
+        try:
+            device = InputDevice(path)
+        except OSError:
+            continue
+
+        if device.capabilities().get(e.EV_LED):
+            return device
+        device.close()
+    return None
+
+
 def check_caps_lock() -> bool:
     """Returns True if Caps Lock is on, False if it is off, and False if it cannot be determined."""
-    devices = [InputDevice(path) for path in list_devices()]
-    for device in devices:
-        if device.capabilities().get(e.EV_LED):
-            return e.LED_CAPSL in device.leds()
-    return False
+    global _caps_lock_device
+
+    with _caps_lock_lock:
+        # Two tries: the cached keyboard may have been unplugged since the last
+        # write, in which case we look for another one
+        for _ in range(2):
+            if _caps_lock_device is None:
+                _caps_lock_device = _find_caps_lock_device()
+                if _caps_lock_device is None:
+                    return False
+
+            try:
+                return e.LED_CAPSL in _caps_lock_device.leds()
+            except Exception:
+                # evdev raises OSError for a device that went away, but a
+                # SystemError for one whose fd is already gone
+                _caps_lock_device.close()
+                _caps_lock_device = None
+
+        return False
 
 def get_keystrokes(table: LayoutTable | None, char: str) -> list[tuple[tuple[int, ...], int]] | None:
     """The key presses that type char, or None if the keyboard cannot reach it"""
