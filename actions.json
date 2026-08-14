@@ -1,0 +1,175 @@
+{
+    "plugin": {
+        "description": "Control the computer itself: run commands, launch apps, press hotkeys, type text and show CPU/RAM usage.",
+        "requirements": "Nothing extra. Commands run on the host, also when StreamController is a Flatpak."
+    },
+    "actions": {
+        "RunCommand": {
+            "description": "Runs a shell command with extras: showing the output on the key, re-running it on a timer, or going through an interactive shell. For simply starting something, use Easy Run Command instead.",
+            "settings": {
+                "command": {
+                    "type": "string",
+                    "required": true,
+                    "description": "The command to run.",
+                    "example": "firefox"
+                },
+                "detached": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Let the command keep running after it was started. Leave this on for launching apps."
+                },
+                "interactive_shell": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run through an interactive login shell, so aliases and shell functions work."
+                },
+                "display_output": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the command's output on the key instead of just running it."
+                },
+                "label_position": {
+                    "type": "string",
+                    "default": "center",
+                    "values": [
+                        "top",
+                        "center",
+                        "bottom"
+                    ],
+                    "description": "Which label row the output goes into. Only used with display_output."
+                },
+                "auto_run": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Re-run the command every N seconds. 0 disables it. Use this together with display_output for a live readout."
+                }
+            }
+        },
+        "EasyCommand": {
+            "description": "Runs a shell command. This is the action to use for starting an app or running anything on the system - it needs nothing but the command itself. Prefer it over Run Command unless you need output on the key or a repeat timer.",
+            "settings": {
+                "command": {
+                    "type": "string",
+                    "required": true,
+                    "example": "systemctl suspend"
+                }
+            }
+        },
+        "Launch": {
+            "description": "Starts an installed application from its desktop entry. Prefer RunCommand when you only know the app's name.",
+            "settings": {
+                "app_path": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Absolute path of the .desktop file.",
+                    "example": "/usr/share/applications/firefox.desktop"
+                }
+            }
+        },
+        "OpenInBrowser": {
+            "description": "Opens a URL in the default browser.",
+            "settings": {
+                "url": {
+                    "type": "string",
+                    "required": true,
+                    "example": "https://github.com"
+                },
+                "new_window": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Open in a new window instead of a new tab."
+                }
+            }
+        },
+        "EasyHotkey": {
+            "description": "Presses a key combination, as if the user had pressed it on the keyboard.",
+            "requirements": "On Wayland this needs the input permission; the plugin asks for it on first use.",
+            "settings": {
+                "hotkey": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Keys joined with +, lowercase.",
+                    "example": "ctrl+shift+m"
+                },
+                "delay": {
+                    "type": "number",
+                    "default": 0.02,
+                    "description": "Seconds between the key presses."
+                }
+            }
+        },
+        "Hotkey": {
+            "description": "Presses a key combination recorded through the UI. Use EasyHotkey when configuring from a description - it takes the combination as plain text.",
+            "settings": {}
+        },
+        "WriteText": {
+            "description": "Types a piece of text into whatever window has focus.",
+            "settings": {
+                "text": {
+                    "type": "string",
+                    "required": true,
+                    "example": "Thanks for watching!"
+                },
+                "delay": {
+                    "type": "number",
+                    "default": 0.01,
+                    "description": "Seconds between characters."
+                }
+            }
+        },
+        "Delay": {
+            "description": "Waits before the next action on the same event runs. Put it between two actions to space them out.",
+            "settings": {
+                "delay": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Seconds to wait.",
+                    "example": 1.0
+                }
+            }
+        },
+        "MoveXY": {
+            "description": "Moves the mouse pointer to a screen position.",
+            "settings": {
+                "x": {
+                    "type": "integer",
+                    "required": true,
+                    "example": 960
+                },
+                "y": {
+                    "type": "integer",
+                    "required": true,
+                    "example": 540
+                }
+            }
+        },
+        "Click": {
+            "description": "Clicks a mouse button at the pointer's current position.",
+            "settings": {}
+        },
+        "CPU": {
+            "description": "Shows current CPU usage on the key. Needs no trigger - it updates itself.",
+            "settings": {}
+        },
+        "RAM": {
+            "description": "Shows current RAM usage on the key. Needs no trigger - it updates itself.",
+            "settings": {}
+        },
+        "CPUTemp": {
+            "description": "Shows the CPU temperature on the key. Updates itself.",
+            "settings": {}
+        },
+        "CPU_Graph": {
+            "description": "Draws CPU usage over time as a graph on the key. Updates itself.",
+            "settings": {}
+        },
+        "RAM_Graph": {
+            "description": "Draws RAM usage over time as a graph on the key. Updates itself.",
+            "settings": {}
+        },
+        "Ping": {
+            "description": "Pings a host and shows the round trip time on the key.",
+            "settings": {}
+        }
+    }
+}
